@@ -32,10 +32,11 @@
                                 <td>{{ product.price }}</td>
                                 <td>{{ product.qty }}</td>
                                 <td>
-                                    
-                                    <router-link :to="`{ name: 'editproduct', params: { id: product.id }}`">
+                               
+                                    <router-link :to="`{/editproduct/${product._id}`">
                                     <v-btn color="success" class="mr-2">Edit</v-btn> 
                                         </router-link>
+                            
                                     <v-btn @click.prevent="deleteProduct(product._id)" color="red">
                                         Delete
                                     </v-btn>
