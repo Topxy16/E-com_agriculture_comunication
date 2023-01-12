@@ -1,9 +1,6 @@
 import { createWebHistory, createRouter } from "vue-router";
-// import CreateComponent from "@/components/CreateComponent.vue";
-// import EditComponent from "@/components/EditComponent.vue";
-// import ListComponent from "@/components/ListComponent.vue";
 import SL_viewproduct from "@/components/SL_viewproduct-page.vue";
-import editproduct from "@/components/Editproduct-page.vue";
+import SL_update from "@/components/SL_update.vue";
 import SL_dashboard from "@/components/SL_dashboard.vue";
 import SL_create from "@/components/SL_create.vue";
 
@@ -22,9 +19,9 @@ const routes = [
         component: SL_viewproduct
       },
       {
-        path: '/editproduct/:id',
-        name: 'editproduct',
-        component: editproduct
+        path: '/SL_update/:id',
+        name: 'SL_update',
+        component: SL_update
       },
       {
         path: '/SL_dashboard',

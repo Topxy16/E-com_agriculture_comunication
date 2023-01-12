@@ -4,7 +4,7 @@
         <v-container fluid>
             <v-row class="mt-5">
                 <v-col cols="3" sm="6" offset-sm="3" class="mt-5">
-                    <h1 class="mb-5">Update Product</h1>
+                    <h1 class="mb-5">แก้ไขข้อมูลสินค้า</h1>
 
                     <v-form ref="form">
 
@@ -15,7 +15,7 @@
                         <!-- <v-file-input v-model="img" label="img" required></v-file-input> -->
 
                         <v-btn color="success" class="mr-4 w-100" @click="handleUpdateForm">
-                            Update
+                            แก้ไข
                         </v-btn>
                         
                     </v-form>
@@ -48,7 +48,7 @@ export default {
 
             axios.put(apiURL, this.product).then((res) => {
                 console.log(res);
-                this.$router.push('/viewproduct')
+                this.$router.push('/SL_viewproduct')
             }).catch(error => {
                 console.log(error)
             })

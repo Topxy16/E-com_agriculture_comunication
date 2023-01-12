@@ -4,24 +4,24 @@
         <v-container fluid>
             <v-row class="mt-5">
                 <v-col cols="3" sm="6" offset-sm="3" class="mt-5">
-                    <h1 class="mb-5">View Product</h1>
+                    <h1 class="mb-5">จัดการสินค้า</h1>
                     <v-table>
                         <thead>
                             <tr>
                                 <th class="text-left">
-                                    Name
+                                    ชื่อสินค้า
                                 </th>
                                 <th class="text-left">
-                                    Details
+                                    รายละเอียด
                                 </th>
                                 <th class="text-left">
-                                    Price
+                                    ราคา
                                 </th>
                                 <th class="text-left">
-                                    qty
+                                    จำนวน
                                 </th>
                                 <th class="text-left">
-                                    Action
+                                    จัดการ
                                 </th>
                             </tr>
                         </thead>
@@ -34,11 +34,11 @@
                                 <td>
                                
                                     <router-link :to="`/editproduct/${product._id}`" class="text-decoration-none">
-                                    <v-btn color="success" class="mr-2">Edit</v-btn> 
+                                    <v-btn color="success" class="mr-2">แก้ไข</v-btn> 
                                         </router-link>
                             
                                     <v-btn @click.prevent="deleteProduct(product._id)" color="red">
-                                        Delete
+                                        ลบ
                                     </v-btn>
                                 </td>
                             </tr>
