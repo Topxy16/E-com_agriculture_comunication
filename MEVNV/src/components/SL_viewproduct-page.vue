@@ -33,7 +33,7 @@
                                 <td>{{ product.qty }}</td>
                                 <td>
                                
-                                    <router-link :to="`{/editproduct/${product._id}`">
+                                    <router-link :to="`/editproduct/${product._id}`" class="text-decoration-none">
                                     <v-btn color="success" class="mr-2">Edit</v-btn> 
                                         </router-link>
                             
