@@ -45,7 +45,7 @@ export default {
     },
     methods: {
         handleSubmitForm() {
-            let apiURL = 'http://localhost:4000/api/create-product';
+            let apiURL = 'http://localhost:4000/api/create';
 
             axios.post(apiURL, this.product).then(() => {
                 this.$router.push('/SL_viewproduct');

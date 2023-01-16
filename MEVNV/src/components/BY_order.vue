@@ -2,68 +2,9 @@
     <v-img src="@/assets/9.png" class="responsive">
         <v-container class="mt-5">
             <v-row class="mb-6" no-gutters>
-                <v-col>
+                
 
-                    <v-hover v-slot="{ isHovering, props }" open-delay="200">
-                        <v-card :elevation="isHovering ? 16 : 2" :class="{ 'on-hover': isHovering }"
-                            class="mx-auto mr-5" height="150" max-width="400" v-bind="props" title="จัดการร้านค้า">
-                            <v-card-text class="text-center">
-
-                                <router-link :to="`/SL_create`" class="text-decoration-none text-black">
-                                    <v-btn prepend-icon="mdi-clipboard-edit" variant="outlined" class="mr-2">
-                                        เพิ่มสินค้า
-                                    </v-btn>
-                                </router-link>
-                                <router-link :to="`/SL_viewproduct`" class="text-decoration-none text-black">
-                                    <v-btn prepend-icon="mdi-clipboard-text" variant="outlined" class="">
-                                        ดูหน้าร้านค้า
-                                    </v-btn>
-                                </router-link>
-                            </v-card-text>
-
-                        </v-card>
-                    </v-hover>
-
-                </v-col>
-
-                <v-col>
-
-                    <v-hover v-slot="{ isHovering, props }" open-delay="200">
-                        <v-card :elevation="isHovering ? 16 : 2" :class="{ 'on-hover': isHovering }"
-                            class="mx-auto mr-5" height="150" max-width="400" v-bind="props" title="จำนวนออเดอร์">
-                            <v-card-text class="mt-6 text-center">
-                                <h1>{{ recordsCount }}</h1>
-                            </v-card-text>
-                        </v-card>
-                    </v-hover>
-
-                </v-col>
-
-                <v-col>
-
-                    <v-hover v-slot="{ isHovering, props }" open-delay="200">
-                        <v-card :elevation="isHovering ? 16 : 2" :class="{ 'on-hover': isHovering }"
-                            class="mx-auto mr-5" height="150" max-width="400" v-bind="props" title="ยังไม่ชำระเงิน">
-                            <v-card-text class="mt-12 text-center">
-
-                            </v-card-text>
-                        </v-card>
-                    </v-hover>
-
-                </v-col>
-
-                <v-col>
-
-                    <v-hover v-slot="{ isHovering, props }" open-delay="200">
-                        <v-card :elevation="isHovering ? 16 : 2" :class="{ 'on-hover': isHovering }" class="mx-auto "
-                            height="150" max-width="400" v-bind="props" title="ยังไม่จัดส่ง">
-                            <v-card-text class="mt-12 text-center">
-
-                            </v-card-text>
-                        </v-card>
-                    </v-hover>
-
-                </v-col>
+                
             </v-row>
 
             <v-row no-gutters>
@@ -71,7 +12,7 @@
 
                     <v-hover v-slot="{ isHovering, props }" open-delay="200">
                         <v-card :elevation="isHovering ? 16 : 2" :class="{ 'on-hover': isHovering }"
-                            class="mx-auto mr-5" height="550" max-width="400" v-bind="props" title="โปรไฟล์ร้านค้า">
+                            class="mx-auto mr-5" height="550" max-width="400" v-bind="props" title="โปรไฟล์ผู้ซื้อ">
                             <v-card-text class="mt-12 text-center">
 
                             </v-card-text>
@@ -85,7 +26,8 @@
                         <v-card :elevation="isHovering ? 16 : 2" :class="{ 'on-hover': isHovering }" class="mx-auto"
                             max-width="1280" v-bind="props">
                             <v-card-text>
-                                <v-table>
+                                <h2>รายละเอียดคำสั่งซื้อ</h2>
+                                <v-table title="ตาราง Order">
                                     <thead>
                                         <tr>
                                             <th class="text-left">
@@ -109,6 +51,9 @@
                                             <th class="text-left">
                                                 สถานะการจัดส่ง
                                             </th>
+                                            <th class="text-left">
+                                                
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -119,17 +64,18 @@
                                             <td>{{ order.sumprice }}</td>
                                             <td>{{ order.address }}</td>
                                             <td>หลักฐานการชำระเงิน</td>
+                                            <td>สถานะการจัดส่ง</td>
                                             <td>
 
                                                 <!-- <router-link :to="`/SL_update/${product._id}`" class="text-decoration-none">
                                     <v-btn color="success" class="mr-2">แก้ไข</v-btn> 
                                         </router-link> -->
                                                 <v-btn @click.prevent="deleteProduct(order._id)" color="success"
-                                                    class="mr-2">
-                                                    จัดส่งแล้ว
+                                                    class="mr-2 ">
+                                                    ส่งหลักฐานการชำระ
                                                 </v-btn>
                                                 <v-btn @click.prevent="deleteProduct(order._id)" color="red">
-                                                    ลบ
+                                                    ลบออเดอร์
                                                 </v-btn>
 
                                             </td>

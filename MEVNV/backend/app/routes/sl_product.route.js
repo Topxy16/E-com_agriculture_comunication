@@ -1,10 +1,11 @@
 const express = require('express')
-const productRoutes = express.Router();
+const slproductRoutes = express.Router();
 
-let ProductModel = require('../models/Product');
+let slproductModel = require('../models/sl_product.model');
 
-productRoutes.route('/').get((req, res, next) => {
-    ProductModel.find((error, data) => {
+//view
+slproductRoutes.route('/').get((req, res, next) => {
+    slproductModel.find((error, data) => {
         if (error) {
             return next(error);
         } else {
@@ -14,8 +15,8 @@ productRoutes.route('/').get((req, res, next) => {
 })
 
 // Create
-productRoutes.route('/create-product').post((req, res, next)=>{
-    ProductModel.create(req.body, (error, data) => {
+slproductRoutes.route('/create').post((req, res, next)=>{
+    slproductModel.create(req.body, (error, data) => {
         if (error) {
             return next(error);
         }else{
@@ -25,8 +26,8 @@ productRoutes.route('/create-product').post((req, res, next)=>{
 })
 
 // Edit
-productRoutes.route('/edit-product/:id').get((req, res, next) => {
-    ProductModel.findById(req.params.id, (error, data) => {
+slproductRoutes.route('/edit/:id').get((req, res, next) => {
+    slproductModel.findById(req.params.id, (error, data) => {
         if (error) {
             return next(error);
         } else {
@@ -36,8 +37,8 @@ productRoutes.route('/edit-product/:id').get((req, res, next) => {
 })
 
 // update
-productRoutes.route('/update-product/:id').put((req, res, next) => {
-    ProductModel.findByIdAndUpdate(req.params.id,{
+slproductRoutes.route('/update/:id').put((req, res, next) => {
+    slproductModel.findByIdAndUpdate(req.params.id,{
         $set: req.body
     }, (error, data) =>{
         if(error){
@@ -50,8 +51,8 @@ productRoutes.route('/update-product/:id').put((req, res, next) => {
 })
 
 //delete
-productRoutes.route('/delete-product/:id').delete((req, res, next) =>{
-    ProductModel.findByIdAndDelete(req.params.id, (error, data) =>{
+slproductRoutes.route('/delete/:id').delete((req, res, next) =>{
+    slproductModel.findByIdAndDelete(req.params.id, (error, data) =>{
         if(error){
             return next(error)
         }else{
@@ -62,4 +63,4 @@ productRoutes.route('/delete-product/:id').delete((req, res, next) =>{
     })
 })
 
-module.exports = productRoutes;
+module.exports = slproductRoutes;

@@ -37,14 +37,14 @@ export default {
         }
     },
     created() {
-        let apiURL = `http://localhost:4000/api/edit-product/${this.$route.params.id}`;
+        let apiURL = `http://localhost:4000/api/edit/${this.$route.params.id}`;
         axios.get(apiURL).then((res) => {
             this.product = res.data
         })
     },
     methods: {
         handleUpdateForm() {
-            let apiURL = `http://localhost:4000/api/update-product/${this.$route.params.id}`;
+            let apiURL = `http://localhost:4000/api/update/${this.$route.params.id}`;
 
             axios.put(apiURL, this.product).then((res) => {
                 console.log(res);

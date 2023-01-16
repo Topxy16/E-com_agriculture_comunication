@@ -33,13 +33,10 @@
                                 <td>{{ product.qty }}</td>
                                 <td>
                                
-                                    <router-link :to="`/SL_update/${product._id}`" class="text-decoration-none">
-                                    <v-btn color="success" class="mr-2">แก้ไข</v-btn> 
+                                    <router-link :to="`/BY_buy/${product._id}`" class="text-decoration-none">
+                                    <v-btn color="success" class="mr-2">สั่งซื้อ</v-btn> 
                                         </router-link>
                             
-                                    <v-btn @click.prevent="deleteProduct(product._id)" color="red">
-                                        ลบ
-                                    </v-btn>
                                 </td>
                             </tr>
                         </tbody>
@@ -66,20 +63,6 @@ export default {
         }).catch(error => {
             console.log(error)
         })
-    },
-    methods: {
-        deleteProduct(id) {
-            let apiURL = `http://localhost:4000/api/delete/${id}`;
-            let indexOfArrayItem = this.Product.findIndex(i => i._id === id);
-
-            if (window.confirm("Do you really want to delete?")) {
-                axios.delete(apiURL).then(() => {
-                    this.Product.splice(indexOfArrayItem, 1)
-                }).catch(error => {
-                    console.log(error)
-                })
-            }
-        }
     }
 }
 </script>
