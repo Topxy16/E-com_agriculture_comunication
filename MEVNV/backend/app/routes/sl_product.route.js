@@ -1,25 +1,26 @@
 const express = require('express')
 const slproductRoutes = express.Router();
-const multer = require('multer');
+// const multer = require('multer');
+const { authJwt } = require("../middlewares");
 
 //img upload
-var storage = multer.diskStorage({
-    destination: function (req, file, cb){
-        cb((null, "./uploads"));
-    },
-    filename: function (req, file, cb){
-        cb(null. file.fieldname + "_" + Data.now() + "_" + file.originalname)
-    }
-});
+// var storage = multer.diskStorage({
+//     destination: function (req, file, cb){
+//         cb((null, "./uploads"));
+//     },
+//     filename: function (req, file, cb){
+//         cb(null. file.fieldname + "_" + Data.now() + "_" + file.originalname)
+//     }
+// });
 
-var upload = multer({
-    storage: storage,
-}).single("image");
+// var upload = multer({
+//     storage: storage,
+// }).single("image");
 
 let slproductModel = require('../models/sl_product.model');
 
 //view
-slproductRoutes.route('/').get((req, res, next) => {
+slproductRoutes.route('/').get([authJwt.verifyToken],(req, res, next) => {
     slproductModel.find((error, data) => {
         if (error) {
             return next(error);
