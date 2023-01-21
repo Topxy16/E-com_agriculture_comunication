@@ -53,16 +53,42 @@ import axios from 'axios';
 export default {
     data() {
         return {
-            Product: []
+            Product: [],
+            apiURL: 'http://localhost:4000/api',
         }
     },
     created() {
-        let apiURL = 'http://localhost:4000/api';
-        axios.get(apiURL).then(res => {
-            this.Product = res.data
-        }).catch(error => {
-            console.log(error)
-        })
+        // let apiURL = 'http://localhost:4000/api';
+        // axios.get(apiURL).then(res => {
+        //     this.Product = res.data
+        // }).catch(error => {
+        //     if (error.response.status === 403) {
+        //         alert('go to Login')
+        //     }
+        //     console.log(error.response)
+        // })
+        this.getProduct()
+    },
+    methods: {
+        async getProduct() {
+            try {
+                const resp = await axios.get(this.apiURL, {
+                    headers: {
+                        Authorization: "Bearer " + localStorage.getItem("token")
+                    }
+                })
+                this.Product = resp.data
+            } catch (e) {
+                if (e.response.status === 403) {
+                    alert("Token Exception")
+                    this.$router.push('/login');
+                } else if (e.response.status === 401) {
+                    alert("Go to Login")
+                    this.$router.push('/login');
+                }
+                console.log(e)
+            }
+        }
     }
 }
 </script>
