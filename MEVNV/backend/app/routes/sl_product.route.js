@@ -1,5 +1,20 @@
 const express = require('express')
 const slproductRoutes = express.Router();
+const multer = require('multer');
+
+//img upload
+var storage = multer.diskStorage({
+    destination: function (req, file, cb){
+        cb((null, "./uploads"));
+    },
+    filename: function (req, file, cb){
+        cb(null. file.fieldname + "_" + Data.now() + "_" + file.originalname)
+    }
+});
+
+var upload = multer({
+    storage: storage,
+}).single("image");
 
 let slproductModel = require('../models/sl_product.model');
 

@@ -4,12 +4,15 @@
         <v-container fluid>
             <v-row class="mt-5">
                 <v-col cols="3" sm="6" offset-sm="3" class="mt-5">
-                    <h1 class="mb-5">แก้ไขข้อมูลสินค้า</h1>
+                    <h1 class="mb-5">สั่งซื้อสินค้า</h1>
 
                     <v-form ref="form">
-
+                        <v-text-field :value="product._id" disabled="true"></v-text-field>
                         <v-text-field v-model="product.name" label="ชื่อสินค้า" disabled="true"></v-text-field>
-                        <v-text-field v-model="order.idproduct" :value="product._id"></v-text-field>
+                        
+                        <!-- <input type="text" v-bind:value="computedIdproduct"> -->
+
+
                         <v-text-field v-model="order.qty" label="จำนวน" required></v-text-field>
                         <v-text-field v-model="order.sumprice" label="ราคา" required></v-text-field>
                         <v-text-field v-model="order.address" label="ที่อยู่ที่ต้องการจัดส่ง" required></v-text-field>
@@ -35,7 +38,8 @@ export default {
     data() {
         return {
             product: {
-                name: ''
+                name: '',
+                _id: '',
 
             },
             order: {
@@ -46,6 +50,24 @@ export default {
 
             },
 
+        }
+    },
+    created() {
+        let apiURL = `http://localhost:4000/api/edit/${this.$route.params.id}`;
+        axios.get(apiURL).then((res) => {
+            this.product = res.data
+           
+        })
+        this.order.idproduct = this.$route.params.id
+    },
+    computed: {
+        computedIdproduct: {
+            get() {
+                return this.product._id;
+            },
+            set(val) {
+                this.order.idproduct = val;
+            }
         }
     },
     methods: {
@@ -67,11 +89,6 @@ export default {
             })
         }
     },
-    created() {
-        let apiURL = `http://localhost:4000/api/edit/${this.$route.params.id}`;
-        axios.get(apiURL).then((res) => {
-            this.product = res.data
-        })
-    },
+    
 }
 </script>

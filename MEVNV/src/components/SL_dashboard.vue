@@ -112,13 +112,13 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="order in Order" :key="order._id">
+                                        <tr v-for="order in order" :key="order._id">
                                             <td>รูปสินค้า</td>
-                                            <td>ชื่อสินค้า</td>
+                                            <div v-for="item in product" :key="item._id"><td>{{ item._id === order.idproduct ? item.name : '' }}</td></div>
                                             <td>{{ order.qty }}</td>
                                             <td>{{ order.sumprice }}</td>
                                             <td>{{ order.address }}</td>
-                                            <td>หลักฐานการชำระเงิน</td>
+                                           <td>สถานะการชำระเงิน</td>
                                             <td>
 
                                                 <!-- <router-link :to="`/SL_update/${product._id}`" class="text-decoration-none">
@@ -153,35 +153,52 @@ import axios from 'axios';
 export default {
     data() {
         return {
-            Order: []
+            order: [],
+            product: [],
+
 
         }
     },
     computed: {
         recordsCount() {
-            return this.Order.length;
+            return this.order.length;
         },
     },
-    created() {
-        let apiURL = 'http://localhost:4000/api/get-order';
-        axios.get(apiURL).then(res => {
-            this.Order = res.data
-        }).catch(error => {
-            console.log(error)
-        })
+    async created() {
+        await this.orderview()
+        await this.productview()
     },
     methods: {
         deleteProduct(id) {
             let apiURL = `http://localhost:4000/api/delete-buy/${id}`;
-            let indexOfArrayItem = this.Order.findIndex(i => i._id === id);
+            let indexOfArrayItem = this.order.findIndex(i => i._id === id);
 
             if (window.confirm("Do you really want to delete?")) {
                 axios.delete(apiURL).then(() => {
-                    this.Order.splice(indexOfArrayItem, 1)
+                    this.order.splice(indexOfArrayItem, 1)
                 }).catch(error => {
                     console.log(error)
                 })
             }
+        },
+        productview() {
+            let apiURL = 'http://localhost:4000/api';
+            axios.get(apiURL).then(res => {
+                this.product = res.data
+                console.log(this.product)
+            }).catch(error => {
+                console.log(error)
+                
+                
+            })
+        },
+        orderview() {
+            let apiURL = 'http://localhost:4000/api/get-order';
+            axios.get(apiURL).then(res => {
+                this.order = res.data
+            }).catch(error => {
+                console.log(error)
+            })
         }
     }
 }
