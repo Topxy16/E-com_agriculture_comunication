@@ -6,7 +6,7 @@
             <v-row no-gutters class="justify-center">
 
                 <v-col cols="6">
-                    <h2 class="mb-3">ตะกร้าสินค้าของคุณ</h2>
+                    <h2 class="mb-3">คำสั่งซื้อของคุณ</h2>
                     <v-hover v-slot="{ isHovering, props }" open-delay="200">
                         <v-card :elevation="isHovering ? 16 : 2" :class="{ 'on-hover': isHovering }" class="mx-auto"
                             max-width="" v-bind="props">
@@ -14,6 +14,9 @@
                                 <v-table>
                                     <thead>
                                         <tr>
+                                            <th class="text-left">
+                                                OrderID
+                                            </th>
                                             <th class="text-left">
                                                 รูปสินค้า
                                             </th>
@@ -36,6 +39,7 @@
                                     </thead>
                                     <tbody>
                                         <tr v-for="order in order" :key="order.user_id">
+                                            <td>{{ order.orde_id }}</td>
                                             <td>รูปสินค้า</td>
                                             <td>
                                                 <div v-for="item in product" :key="item.product_id">

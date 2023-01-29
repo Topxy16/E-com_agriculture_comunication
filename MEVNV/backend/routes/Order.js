@@ -77,7 +77,7 @@ router.get('/GetOder-forCart', [authJwt.verifyToken], (req, res) => {
 router.get('/GetCart-forOder', [authJwt.verifyToken], (req, res) => {
   const user_id = req.user.user_id
   db.query(
-    `SELECT orde.*, orde_detail.*, product.product_price, product.product_name
+    `SELECT orde.*, orde_detail.orde_d_id, orde_detail.product_id, orde_detail.product_number, product.product_price, product.product_name
     FROM orde 
       LEFT JOIN orde_detail ON orde_detail.orde_id = orde.orde_id
       , product WHERE orde.user_id = ${user_id};`,
