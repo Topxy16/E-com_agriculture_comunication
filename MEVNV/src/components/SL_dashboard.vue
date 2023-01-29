@@ -9,9 +9,19 @@
                             class="mx-auto mr-5" height="150" max-width="400" v-bind="props" title="จัดการร้านค้า">
                             <v-card-text class="text-center">
 
-                                <router-link :to="`/SL_create`" class="text-decoration-none text-black">
+                                <router-link :to="`/SL_productcreate`" class="text-decoration-none text-black">
                                     <v-btn prepend-icon="mdi-clipboard-edit" variant="outlined" class="mr-2">
                                         เพิ่มสินค้า
+                                    </v-btn>
+                                </router-link>
+                                <router-link :to="`/SL_viewproduct`" class="text-decoration-none text-black">
+                                    <v-btn prepend-icon="mdi-clipboard-text" variant="outlined" class="">
+                                        ดูหน้าร้านค้า
+                                    </v-btn>
+                                </router-link>
+                                <router-link :to="`/SL_storecreate/${user.user_id}`" class="text-decoration-none text-black">
+                                    <v-btn prepend-icon="mdi-clipboard-text" variant="outlined" class="">
+                                        สร้างร้านค้า
                                     </v-btn>
                                 </router-link>
                                 <router-link :to="`/SL_viewproduct`" class="text-decoration-none text-black">
@@ -92,7 +102,7 @@
                                                 รูปสินค้า
                                             </th>
                                             <th class="text-left">
-                                                ชื่อ
+                                                ชื่อสินค้า
                                             </th>
                                             <th class="text-left">
                                                 จำนวน
@@ -114,7 +124,7 @@
                                     <tbody>
                                         <tr v-for="order in order" :key="order._id">
                                             <td>รูปสินค้า</td>
-                                            <div v-for="item in product" :key="item._id"><td>{{ item._id === order.idproduct ? item.name : '' }}</td></div>
+                                            <td><div v-for="item in product" :key="item._id">{{ item._id === order.idproduct ? item.name : '' }}</div></td>
                                             <td>{{ order.qty }}</td>
                                             <td>{{ order.sumprice }}</td>
                                             <td>{{ order.address }}</td>
@@ -155,7 +165,8 @@ export default {
         return {
             order: [],
             product: [],
-
+            user: [],
+            apiURL: 'http://localhost:4000/api',
 
         }
     },
@@ -166,7 +177,8 @@ export default {
     },
     async created() {
         await this.orderview()
-        await this.productview()
+        await this.viewProduct()
+        
     },
     methods: {
         deleteProduct(id) {
@@ -181,16 +193,24 @@ export default {
                 })
             }
         },
-        productview() {
-            let apiURL = 'http://localhost:4000/api';
-            axios.get(apiURL).then(res => {
-                this.product = res.data
-                console.log(this.product)
-            }).catch(error => {
-                console.log(error)
-                
-                
-            })
+        async viewProduct() {
+            try {
+                const resp = await axios.get(this.apiURL, {
+                    headers: {
+                        Authorization: "Bearer " + localStorage.getItem("token")
+                    }
+                })
+                this.product = resp.data
+            } catch (e) {
+                if (e.response.status === 403) {
+                    alert("Token Exception")
+                    this.$router.push('/login');
+                } else if (e.response.status === 401) {
+                    alert("Go to Login")
+                    this.$router.push('/login');
+                }
+                console.log(e)
+            }
         },
         orderview() {
             let apiURL = 'http://localhost:4000/api/get-order';
@@ -199,7 +219,7 @@ export default {
             }).catch(error => {
                 console.log(error)
             })
-        }
+        },
     }
 }
 </script>

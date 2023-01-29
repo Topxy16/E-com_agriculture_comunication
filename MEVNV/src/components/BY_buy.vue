@@ -9,12 +9,10 @@
                     <v-form ref="form">
                         <v-text-field :value="product._id" disabled="true"></v-text-field>
                         <v-text-field v-model="product.name" label="ชื่อสินค้า" disabled="true"></v-text-field>
-                        
+                        <v-text-field v-model="product.price" label="ราคาสินค้าต่อชิ้น" disabled="true"></v-text-field>                       
                         <!-- <input type="text" v-bind:value="computedIdproduct"> -->
-
-
                         <v-text-field v-model="order.qty" label="จำนวน" required></v-text-field>
-                        <v-text-field v-model="order.sumprice" label="ราคา" required></v-text-field>
+                        <v-text-field v-model="order.sumprice" label="ราคารวม" required></v-text-field>
                         <v-text-field v-model="order.address" label="ที่อยู่ที่ต้องการจัดส่ง" required></v-text-field>
                         <!-- <v-file-input v-model="img" label="หลักฐานการชำระเงิน" required></v-file-input> -->
 
@@ -53,7 +51,7 @@ export default {
         }
     },
     created() {
-        let apiURL = `http://localhost:4000/api/edit/${this.$route.params.id}`;
+        let apiURL = `http://localhost:3001/api/edit/${this.$route.params.id}`;
         axios.get(apiURL).then((res) => {
             this.product = res.data
            

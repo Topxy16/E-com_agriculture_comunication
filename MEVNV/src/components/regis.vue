@@ -1,26 +1,28 @@
 <template>
     <v-img src="@/assets/9.png" class="responsive">
         <v-container fluid>
-            <v-row class="mt-5 " align-center>
-                <v-col cols="4"></v-col>
-                <v-col cols="3" class="mt-5">
-                    <h1 class="mb-5">สมัครสมาชิกผู้ขาย</h1>
+            <v-row class="mt-5 justify-center">
+                <v-col cols="4" class="mt-5">
+                    <h1 class="mb-5">สมัครสมาชิก</h1>
+                    <v-alert v-show="showAlert" dense outlined type="error">
+                                {{alertMessage}}
+                            </v-alert>
+                    <form action="post">
+                        <v-form ref="form">
 
-                    <v-form ref="form">
+                            <v-text-field v-model="user.f_name" label="ชื่อ" required></v-text-field>
+                            <v-text-field v-model="user.l_name" label="นามสกุล" required></v-text-field>
+                            <v-text-field v-model="user.username" type="" label="ชื่อผู้ใช้งาน" required></v-text-field>
+                            <v-text-field v-model="user.password" type="password" label="รหัสผ่าน"
+                                required></v-text-field>
+                            <v-text-field v-model="user.tel" type="" label="เบอร์โทรศัพท์" required></v-text-field>
 
-                        <v-text-field v-model="user.username" label="ชื่อผู้ใช้งาน" required></v-text-field>
-                        <v-text-field v-model="user.email" label="อีเมล" required></v-text-field>
-                        <v-text-field v-model="user.password" type="password" label="รหัสผ่าน" required></v-text-field>
-                        
-                        <v-autocomplete label="ประเภทผู้ใช้งาน" v-model="user.roles"
-                            :items="roles" item-title="name" item-value="id" :return-object="false"></v-autocomplete>
-
-                        <v-btn color="success" class="mr-4 w-100" @click="handleSubmitForm">
-                            สมัครสมาชิก
-                        </v-btn>
-
-                    </v-form>
-
+                            <v-btn color="success" class="mr-4 w-100" @click="handleSubmitForm">
+                                สมัครสมาชิก
+                            </v-btn>
+                            
+                        </v-form>
+                    </form>
                 </v-col>
             </v-row>
         </v-container>
@@ -37,36 +39,34 @@ export default {
     data() {
         return {
             user: {
+                f_name: "",
+                l_name: "",
                 username: "",
-                email: "",
                 password: "",
-                roles: [""]
+                tel: "",
 
             },
-
-            roles: [
-                {id:"user", name:"ผู้ซื้อ"},
-                {id:"moderator", name:"ผู้ขาย"},
-
-        ]
-            
+            showAlert: false,
+            alertMessage: "",
         }
     },
     methods: {
-        handleSubmitForm() {
-            let apiURL = 'http://localhost:4000/api/auth/signup';
-
-            axios.post(apiURL, this.user).then(() => {
+        async handleSubmitForm() {
+            await axios.post('http://localhost:3001/api/auth/sign-up',{
+                f_name: this.user.f_name,
+                l_name: this.user.l_name,
+                username: this.user.username,
+                password: this.user.password,
+                tel: this.user.tel,
+            }).then((res) => {
+                console.log(res.data.message)
+                this.showAlert = true;               
                 this.$router.push('/login');
-                this.user = {
-                    username: "",
-                    email: "",
-                    password: "",
-                    roles: [""],
 
-                }
             }).catch(error => {
                 console.log(error)
+                this.showAlert = true;
+                this.alertMessage = error.response.data.message;
             })
         }
     }

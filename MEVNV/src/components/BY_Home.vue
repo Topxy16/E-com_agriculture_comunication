@@ -1,91 +1,109 @@
 <template>
 
-    <v-img src="@/assets/9.png" class="responsive">
-        <v-container fluid>
-            <v-row class="mt-5">
-                <v-col cols="3" sm="6" offset-sm="3" class="mt-5">
-                    <h1 class="mb-5">จัดการสินค้า</h1>
-                    <v-table>
-                        <thead>
-                            <tr>
-                                <th class="text-left">
-                                    ชื่อสินค้า
-                                </th>
-                                <th class="text-left">
-                                    รายละเอียด
-                                </th>
-                                <th class="text-left">
-                                    ราคา
-                                </th>
-                                <th class="text-left">
-                                    จำนวน
-                                </th>
-                                <th class="text-left">
-                                    จัดการ
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="product in Product" :key="product._id">
-                                <td>{{ product.name }}</td>
-                                <td>{{ product.detail }}</td>
-                                <td>{{ product.price }}</td>
-                                <td>{{ product.qty }}</td>
-                                <td>
-                               
-                                    <router-link :to="`/BY_buy/${product._id}`" class="text-decoration-none">
-                                    <v-btn color="success" class="mr-2">สั่งซื้อ</v-btn> 
-                                        </router-link>
-                            
-                                </td>
-                            </tr>
-                        </tbody>
-                    </v-table>
-                </v-col>
-            </v-row>
-        </v-container>
-    </v-img>
+
+    <v-container fluid>
+        <v-carousel height="400" hide-delimiters progress="primary">
+            <v-carousel-item v-for="(slide, i) in slides" :key="i">
+                <v-sheet height="100%">
+                    <div class="d-flex fill-height justify-center align-center">
+                        <div class="text-h2">
+                            {{ slide }} Slide
+                        </div>
+                    </div>
+                </v-sheet>
+            </v-carousel-item>
+        </v-carousel>
+
+        <v-row class="mt-5">
+            <v-col cols="2" v-for="product in product" :key="product.product_id">
+                <v-hover v-slot="{ isHovering, props }" open-delay="200">
+                    <v-card :elevation="isHovering ? 16 : 2" :class="{ 'on-hover': isHovering }" class="" height="500"
+                        v-bind="props">
+                        <v-card-text class="">
+
+                            <v-img cover src="https://cdn.vuetifyjs.com/images/cards/cooking.png"></v-img>
+
+                            <v-card-item>
+                                <v-card-title><b> {{ product.product_name }}</b></v-card-title>
+                                <v-card-text><b>by shop_name</b></v-card-text>
+                            </v-card-item>
+
+                            <v-card-text>
+                                <div class="text-subtitle-1">
+                                    ฿ • {{ product.product_price }}
+                                </div>
+
+                                <div>product_detail</div>
+                                <div><b>จำนวนคงเหลือ : </b>{{ product.product_number }}</div>
+                            </v-card-text>
+
+                            <v-btn @click="AddProductToCart(product.product_id)" color="success justify-sticky"
+                                class="mr-2 w-100">เพิ่มลงตะกร้าสินค้า</v-btn>
+
+
+                        </v-card-text>
+
+                    </v-card>
+                </v-hover>
+            </v-col>
+
+        </v-row>
+    </v-container>
+
 </template>
 
 <script>
 import axios from 'axios';
-
+import setAuthheader from "../utils/setAuthheader";
 export default {
     data() {
         return {
-            Product: [],
-            apiURL: 'http://localhost:4000/api',
+            product: [],
+            order: [],
+            slides: [
+                'First',
+                'Second',
+                'Third',
+                'Fourth',
+                'Fifth',
+            ],
         }
     },
-    created() {
-        // let apiURL = 'http://localhost:4000/api';
-        // axios.get(apiURL).then(res => {
-        //     this.Product = res.data
-        // }).catch(error => {
-        //     if (error.response.status === 403) {
-        //         alert('go to Login')
-        //     }
-        //     console.log(error.response)
-        // })
-        this.getProduct()
+    async created() {
+        setAuthheader(localStorage.getItem("token"))
+        await this.getProduct()
     },
     methods: {
+        async AddProductToCart(product_id) {
+            console.log(product_id)
+            try {
+                const resp = await axios.post(`http://localhost:3001/api/create-Order-to-cart/${product_id}`, {
+                    product_id: this.product.product_id
+                })
+                this.order = resp.data.data[0]
+            } catch (e) {
+                // if (e.response.status === 403) {
+                //     alert("Token Exception")
+                //     this.$router.push('/login');
+                // } else if (e.response.status === 401) {
+                //     alert("Go to Login")
+                //     this.$router.push('/login');
+                // }
+                console.log(e)
+            }
+        },
         async getProduct() {
             try {
-                const resp = await axios.get(this.apiURL, {
-                    headers: {
-                        Authorization: "Bearer " + localStorage.getItem("token")
-                    }
-                })
-                this.Product = resp.data
+                const resp = await axios.get('http://localhost:3001/api/product',)
+                this.product = resp.data.data
             } catch (e) {
-                if (e.response.status === 403) {
-                    alert("Token Exception")
-                    this.$router.push('/login');
-                } else if (e.response.status === 401) {
-                    alert("Go to Login")
-                    this.$router.push('/login');
-                }
+                // if (e.response.status === 403) {
+                //     alert("Token Exception")
+                //     this.$router.push('/login');
+                // } else if (e.response.status === 401) {
+                //     alert("Go to Login")
+                //     this.$router.push('/login');
+                // }
                 console.log(e)
             }
         }
