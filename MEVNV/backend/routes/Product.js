@@ -24,10 +24,28 @@ router.get('/product/search', (req, res) => {
   )
 })
 
-// get Product All
+// get Product version get img
+// router.get('/product', (req, res) => {
+//   db.query(
+//     `select product.*, db_image.image from product LEFT JOIN db_image ON db_image.product_id = product.product_id where product_show = 1 AND db_image.default_image = 1;`,
+//     (err, data) => {
+//       if (err) {
+//         return res.status(401).send({
+//           message: err.message
+//         })
+//       } else {
+//         return res.status(200).json({
+//           data: data,
+//           total: data.length
+//         })
+//       }
+//     }
+//   )
+// })
+// get Product all
 router.get('/product', (req, res) => {
   db.query(
-    `select product.*, db_image.image from product LEFT JOIN db_image ON db_image.product_id = product.product_id where product_show = 1 AND db_image.default_image = 1;`,
+    `select * from product`,
     (err, data) => {
       if (err) {
         return res.status(401).send({
@@ -81,7 +99,7 @@ router.get('/product/store/:id', (req, res) => {
     }
   )
 })
-<<<<<<< HEAD
+
 // get Product By Product ID
 router.get('/product-get-product-id/:id', (req, res) => {
   const id = req.params.id
@@ -100,7 +118,7 @@ router.get('/product-get-product-id/:id', (req, res) => {
       }
     }
   )
-=======
+  })
 
 // get Product Detail
 router.get('/product/detail/:id', (req, res) => {
@@ -113,7 +131,7 @@ router.get('/product/detail/:id', (req, res) => {
       return res.status(200).json(data)
     }
   })
->>>>>>> 15ed79e2ec2763eb65344556a8a01d46caa725b2
+
 })
 // create Product
 router.post('/product', [authJwt.verifyToken, authJwt.isStore], (req, res) => {

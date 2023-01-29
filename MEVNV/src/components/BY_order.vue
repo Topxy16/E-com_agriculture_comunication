@@ -43,12 +43,20 @@
                                                 </div>
                                             </td>
                                             <td>{{ order.product_number }}</td>
-                                            <td>{{ product.product_price }}</td>
-                                            <td>{{ product.product_price * order.product_number }}</td>
                                             <td>
-                                                    <v-btn @click="AddProductToOrder(product.product_id,product.product_number)" color="success" class="mr-2">
-                                                        ชำระเงิน
-                                                    </v-btn>
+                                                <div v-for="item in product" :key="item.product_id">
+                                                    {{ item.product_id === order.product_id ? item.product_price : '' }}
+                                                </div>
+                                            </td>
+                                            <td><div v-for="item in product" :key="item.product_id">
+                                                    {{ item.product_id === order.product_id ? item.product_price*order.product_number : '' }}
+                                                </div></td>
+                                            <td>
+                                                <v-btn
+                                                    @click="AddProductToOrder(product.product_id, product.product_number)"
+                                                    color="success" class="mr-2">
+                                                    ชำระเงิน
+                                                </v-btn>
 
                                                 <v-btn @click="deleteOrderInCart(cart.orde_id)" color="red">
                                                     ลบสินค้าออกจากตะกร้า
@@ -107,14 +115,14 @@ export default {
                 console.log(e)
             }
         },
-        async AddProductToOrder(product_id,product_name) {
+        async AddProductToOrder(product_id, product_name) {
             try {
                 const resp = await axios.post(`http://localhost:3001/api/create-order-to-cart/${product_id},${product_name}`, {
                     product_id: this.product.product_id,
                     product_number: this.product.product_number
                 })
                 this.order = resp.data.data[0]
-               
+
             } catch (e) {
                 // if (e.response.status === 403) {
                 //     alert("Token Exception")

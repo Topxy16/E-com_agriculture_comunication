@@ -14,7 +14,7 @@ import BY_cart from "@/components/BY_cart.vue";
 import Admin_dashboard from "@/components/Admin_dashboard.vue";
 import Admin_userupdate from "@/components/Admin_userupdate.vue";
 import SL_storecreate from "@/components/SL_storecreate.vue";
-import by_order from "@/components/by_order.vue";
+import BY_order from "@/components/BY_order.vue";
 import SL_Ptypecreate from "@/components/SL_Ptypecreate.vue";
 
 const routes = [
@@ -102,9 +102,9 @@ const routes = [
         component: SL_storecreate
       },
       {
-        path: '/by_order',
-        name: 'by_order',
-        component: by_order
+        path: '/BY_order',
+        name: 'BY_order',
+        component: BY_order
       },
       {
         path: '/SL_Ptypecreate',

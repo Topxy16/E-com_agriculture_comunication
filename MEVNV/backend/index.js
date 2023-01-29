@@ -41,16 +41,16 @@ const store = require("./routes/Store");
 const product = require("./routes/Product")
 const product_ty = require("./routes/ProductTy")
 const upload = require("./routes/Upload")
-<<<<<<< HEAD
 const order = require("./routes/Order")
+
 app.use("/api/auth", auth);
 app.use("/api", [role, user_add, otp, user_role, user, store, product, product_ty, upload, order]);
-=======
+
 const image = require("./routes/Image")
 const userfollow = require("./routes/UserFollow")
 app.use("/api/auth", auth);
 app.use("/api", [role, user_add, otp, user_role, user, store, product, product_ty, upload, image, userfollow]);
->>>>>>> 15ed79e2ec2763eb65344556a8a01d46caa725b2
+
 
 app.listen(port, () => {
     console.log('server on port http://localhost:' + port);
