@@ -17,7 +17,7 @@
         <v-row class="mt-5">
             <v-col cols="2" v-for="product in product" :key="product.product_id">
                 <v-hover v-slot="{ isHovering, props }" open-delay="200">
-                    <v-card :elevation="isHovering ? 16 : 2" :class="{ 'on-hover': isHovering }" class="" height="500"
+                    <v-card :elevation="isHovering ? 16 : 2" :class="{ 'on-hover': isHovering }" class="" height="450"
                         v-bind="props">
                         <v-card-text class="">
 

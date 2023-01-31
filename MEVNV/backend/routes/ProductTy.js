@@ -79,6 +79,43 @@ router.post(
   }
 )
 
+router.delete('/product-type/:product_type_id', [authJwt.verifyToken], (req, res) => {
+  const product_type_id = req.params.product_type_id
+  db.query(
+    `select product_type_id from product_type where product_type_id = ${product_type_id};`,
+    (err, result) => {
+      if (err) {
+        return res.status(400).send({
+          code: err.code,
+          message: err.message
+        })
+      } else {
+        if (result.length === 0) {
+          return res.status(404).send({
+            message: 'product_type_id not found'
+          })
+        } else {
+          db.query(
+            `delete from product_type where product_type_id = ${product_type_id}`,
+            (err) => {
+              if (err) {
+                return res.status(400).send({
+                  code: err.code,
+                  message: err.message
+                })
+              } else {
+                return res.status(200).send({
+                  message: 'delete succeeded'
+                })
+              }
+            }
+          )
+        }
+      }
+    }
+  )
+})
+
 // update Product type
 router.patch(
   '/product-type/:id',

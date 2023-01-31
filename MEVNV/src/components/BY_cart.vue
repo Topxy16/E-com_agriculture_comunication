@@ -65,7 +65,7 @@
 
                                             <td>
 
-                                                <v-btn @click="AddProductToOrder(cart.product_id, cart.product_number)"
+                                                <v-btn @click="AddProductToOrder(cart.product_id, cart.product_number, cart.cart_shop_id)"
                                                     color="success" class="mr-2">
                                                     สั่งซื้อ
                                                 </v-btn>
@@ -136,11 +136,12 @@ export default {
                 console.log(e)
             }
         },
-        async AddProductToOrder(product_id, product_number) {
+        async AddProductToOrder(product_id, product_number, cart_shop_id) {
             try {
-                const resp = await axios.post(`http://localhost:3001/api/create-Order-to-Order/${product_id},${product_number}`, {
+                const resp = await axios.post(`http://localhost:3001/api/create-Order-to-Order/${product_id},${product_number},${cart_shop_id}`, {
                     product_id: this.cart.product_id,
                     product_number: this.cart.product_number,
+                    cart_shop_id: this.cart.cart_shop_id,
                 })
 
                 this.cart = resp.data.data

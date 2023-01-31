@@ -24,11 +24,14 @@
     <v-list density="compact" nav>
       <v-list-item prepend-icon="mdi-account-multiple" title="User" :to="item.link1"></v-list-item>
       <v-list-item prepend-icon="mdi-account-edit" title="Role" :to="item.link2"></v-list-item>
+      <v-list-item prepend-icon="mdi-account" title="User_Address" :to="item.link9"></v-list-item>
+      <v-list-item prepend-icon="mdi-account" title="User_Profile" :to="item.link10"></v-list-item>
       <v-list-item prepend-icon="mdi-clipboard-edit" title="Product type" :to="item.link8"></v-list-item>
       <v-list-item prepend-icon="mdi-home" title="Home" :to="item.link3"></v-list-item>
       <v-list-item prepend-icon="mdi-cart" title="Your Cart" :to="item.link4"></v-list-item>
       <v-list-item prepend-icon="mdi-clipboard" title="Your Order" :to="item.link7"></v-list-item>
       <v-list-item prepend-icon="mdi-store" title="Store" :to="item.link5"></v-list-item>
+    
 
       <v-list-item prepend-icon="mdi-store-edit" title="Store Create" :to="item.link6"></v-list-item>
     </v-list>
@@ -55,6 +58,8 @@ export default {
         link6: '/SL_storecreate',
         link7: '/by_order',
         link8: '/SL_Ptypecreate',
+        link9: '/CreateUser_address',
+        link10: '/UserProfile',
       }
 
     }

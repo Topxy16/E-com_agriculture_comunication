@@ -16,6 +16,12 @@ import Admin_userupdate from "@/components/Admin_userupdate.vue";
 import SL_storecreate from "@/components/SL_storecreate.vue";
 import BY_order from "@/components/BY_order.vue";
 import SL_Ptypecreate from "@/components/SL_Ptypecreate.vue";
+import CreateUser_address from "@/components/CreateUser_address.vue";
+import UserProfile from "@/components/UserProfile.vue";
+import UpdateUser_address from "@/components/UpdateUser_address.vue";
+import UpdateUserInfo from "@/components/UpdateUserInfo.vue";
+import BY_Payment from "@/components/BY_Payment.vue";
+import SL_isdelivery from "@/components/SL_isdelivery.vue";
 
 const routes = [
   {
@@ -110,6 +116,36 @@ const routes = [
         path: '/SL_Ptypecreate',
         name: 'SL_Ptypecreate',
         component: SL_Ptypecreate
+      },
+      {
+        path: '/CreateUser_address',
+        name: 'CreateUser_address',
+        component: CreateUser_address
+      },
+      {
+        path: '/UserProfile',
+        name: 'UserProfile',
+        component: UserProfile
+      },
+      {
+        path: '/UpdateUser_address/:id',
+        name: 'UpdateUser_address',
+        component: UpdateUser_address
+      },
+      {
+        path: '/UpdateUserInfo/:id',
+        name: 'UpdateUserInfo',
+        component: UpdateUserInfo
+      },
+      {
+        path: '/BY_Payment/:id',
+        name: 'BY_Payment',
+        component: BY_Payment
+      },
+      {
+        path: '/SL_isdelivery/:id',
+        name: 'SL_isdelivery',
+        component: SL_isdelivery
       },
     ],
   },

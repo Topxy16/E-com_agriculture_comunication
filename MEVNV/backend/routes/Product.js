@@ -142,7 +142,7 @@ router.post('/product', [authJwt.verifyToken, authJwt.isStore], (req, res) => {
   const product_number = req.body.product_number
   let store_id = 0
   db.query(
-    `select * from user_role where user_id = ${user_id} and role_id = 3;`,
+    `select * from user_role where user_id = ${user_id} and role_id = 2;`,
     (err, data) => {
       if (err) {
         return res.status(401).send({

@@ -17,7 +17,7 @@
                     </v-form>
 
                 </v-col>
-                <v-col cols="9">
+                <v-col cols="5">
                     <v-hover v-slot="{ isHovering, props }" open-delay="200">
                         <v-card :elevation="isHovering ? 16 : 2" :class="{ 'on-hover': isHovering }" class="mx-auto"
                             max-width="1280" v-bind="props">
@@ -31,31 +31,21 @@
                                             <th class="text-left">
                                                 Type_name
                                             </th>
+                                            <th class="text-left">
+                                                Tool
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="item in typeshow" :key="item.product_type_id">
-
-                                          
+                                        <tr v-for="item in typeshow" :key="item.product_type_id">                                         
                                             <td>{{ item.product_type_name }}</td>
-                                            <td>{{ item.product_type_id }}</td>
-                                  
-
-                                       
-                                            <!-- <td>
-
-                                                <router-link :to="`/SL_update/${product._id}`" class="text-decoration-none">
-                                    <v-btn color="success" class="mr-2">แก้ไข</v-btn> 
-                                        </router-link>
-                                                <v-btn @click.prevent="deleteProduct(order._id)" color="success"
-                                                    class="mr-2">
-                                                    จัดส่งแล้ว
-                                                </v-btn>
-                                                <v-btn @click.prevent="deleteProduct(order._id)" color="red">
+                                            <td>{{ item.product_type_id }}</td>                                      
+                                            <td>
+                                                <v-btn @click.prevent="deletePtype(item.product_type_id)" color="red">
                                                     ลบ
                                                 </v-btn>
 
-                                            </td> -->
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </v-table>
@@ -90,15 +80,33 @@ export default {
     async created() {
         setAuthheader(localStorage.getItem("token"))
         await this.getProductType()
+        
     },
     methods: {
+        async deletePtype(product_type_id) {
+            try {
+                const resp = await axios.delete(`http://localhost:3001/api/product-type/${product_type_id}`)
+                this.product_type = resp.data.data
+                this.$router.go()
+
+            } catch (e) {
+                // if (e.response.status === 403) {
+                //     alert("Token Exception")
+                //     this.$router.push('/login');
+                // } else if (e.response.status === 401) {
+                //     alert("Go to Login")
+                //     this.$router.push('/login');
+                // }
+                console.log(e)
+            }
+        },
         async handleSubmitForm() {
             try {
                 const resp = await axios.post('http://localhost:3001/api/product-type',{
                     name: this.product_type.name,
                 })
                 this.product_type = resp.data.data
-                // this.$router.go()
+                this.$router.go()
 
             } catch (e) {
                 // if (e.response.status === 403) {

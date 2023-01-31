@@ -8,15 +8,19 @@
                     <v-form ref="form">
 
                         <v-text-field v-model="product.product_name" label="ชื่อ" required></v-text-field>
-                        <v-text-field v-model="product_detail.pd_description" label="รายละเอียด"
-                            required></v-text-field>
-                        <v-text-field v-model="product_type.product_type_name" label="ประเภท" required></v-text-field>
+                        <v-text-field v-model="product.pd_description" label="รายละเอียด" required></v-text-field>
+                        <v-text-field v-model="typeshow.product_type_name" label="ประเภท" required></v-text-field>
+
+                        <v-select label="Select" v-model="product.py_id" 
+                        :items="[typeshow]">
+                        </v-select>
+
                         <v-text-field v-model="product.product_price" label="ราคา" required></v-text-field>
                         <v-text-field v-model="product.product_number" label="จำนวน" required></v-text-field>
                         <!-- <v-file-input v-model="img" label="img" required></v-file-input> -->
 
                         <v-btn color="success" class="mr-4 w-100" @click="handleSubmitForm">
-                            Create
+                            เพิ่ม
                         </v-btn>
 
                     </v-form>
@@ -38,42 +42,58 @@ export default {
     data() {
         return {
             product: {
-                product_name: "",
-                product_price: "",
-                product_number: "",
+                py_id: '',
+                product_name: '',
+                product_price: '',
+                product_number: ''
             },
-            product_detail: {
-                pd_description: "",
-
-            },
-            product_type: {
-                product_type_name: "",
-
-            },
+            typeshow: [],
         }
     },
-    created() {
+    async created() {
         setAuthheader(localStorage.getItem("token"))
+        await this.getProductType()
+
     },
     methods: {
         async handleSubmitForm() {
-            await axios.post('http://localhost:3001/api/product', {
-                product_name: this.product.product_name,
-                product_price: this.product.product_price,
-                product_number: this.product.product_number,
-                product_type_name: this.product_type.product_type_name,
-                pd_description: this.product_detail.pd_description,
-            }).then((res) => {
-                console.log(res.data.message)
-                this.showAlert = true;
-                this.$router.push('/SL_viewproduct');
+            try {
+                const resp = await axios.post('http://localhost:3001/api/product', {
+                    py_id: this.product.py_id,
+                    product_name: this.product.product_name,
+                    product_price: this.product.product_price,
+                    product_number: this.product.product_number,
+                })
+                this.product = resp.data.data
+                this.$router.go()
 
-            }).catch(error => {
-                console.log(error)
-                this.showAlert = true;
-                this.alertMessage = error.response.data.message;
-            })
-        }
+            } catch (e) {
+                // if (e.response.status === 403) {
+                //     alert("Token Exception")
+                //     this.$router.push('/login');
+                // } else if (e.response.status === 401) {
+                //     alert("Go to Login")
+                //     this.$router.push('/login');
+                // }
+                console.log(e)
+            }
+        },
+        async getProductType() {
+            try {
+                const resp = await axios.get('http://localhost:3001/api/product-type')
+                this.typeshow = resp.data.data[0]
+
+            } catch (e) {
+                // if (e.response.status === 403) {
+                //     alert("Token Exception")
+                //     this.$router.push('/login');
+                // } else if (e.response.status === 401) {
+                //     alert("Go to Login")
+                //     this.$router.push('/login');
+                // }
+                console.log(e)
+            }
+        },
     }
 }
 </script>

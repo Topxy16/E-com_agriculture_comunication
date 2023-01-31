@@ -1,7 +1,7 @@
 <template>
     <v-img src="@/assets/9.png" class="responsive">
         <v-container class="mt-5">
-            <v-row class="mb-6" no-gutters>
+            <v-row class="mb-6 justify-center" no-gutters>
                 <v-col>
 
                     <v-hover v-slot="{ isHovering, props }" open-delay="200">
@@ -17,11 +17,6 @@
                                 <router-link :to="`/SL_viewproduct`" class="text-decoration-none text-black">
                                     <v-btn prepend-icon="mdi-clipboard-text" variant="outlined" class="">
                                         ดูหน้าร้านค้า
-                                    </v-btn>
-                                </router-link>
-                                <router-link :to="`/SL_storecreate/${user.user_id}`" class="text-decoration-none text-black">
-                                    <v-btn prepend-icon="mdi-clipboard-text" variant="outlined" class="">
-                                        สร้างร้านค้า
                                     </v-btn>
                                 </router-link>
                                 <router-link :to="`/SL_viewproduct`" class="text-decoration-none text-black">
@@ -77,71 +72,81 @@
             </v-row>
 
             <v-row no-gutters>
-                <v-col cols="3">
+                
 
-                    <v-hover v-slot="{ isHovering, props }" open-delay="200">
-                        <v-card :elevation="isHovering ? 16 : 2" :class="{ 'on-hover': isHovering }"
-                            class="mx-auto mr-5" height="550" max-width="400" v-bind="props" title="โปรไฟล์ร้านค้า">
-                            <v-card-text class="mt-12 text-center">
-
-                            </v-card-text>
-                        </v-card>
-                    </v-hover>
-
-                </v-col>
-
-                <v-col cols="9">
+                <v-col cols="12">
                     <v-hover v-slot="{ isHovering, props }" open-delay="200">
                         <v-card :elevation="isHovering ? 16 : 2" :class="{ 'on-hover': isHovering }" class="mx-auto"
-                            max-width="1280" v-bind="props">
+                             v-bind="props">
                             <v-card-text>
                                 <v-table>
                                     <thead>
                                         <tr>
                                             <th class="text-left">
+                                                เลขออเดอร์
+                                            </th>
+                                            <th class="text-left">
                                                 รูปสินค้า
                                             </th>
                                             <th class="text-left">
-                                                ชื่อสินค้า
+                                                ชื่อ
                                             </th>
                                             <th class="text-left">
                                                 จำนวน
                                             </th>
                                             <th class="text-left">
-                                                ราคารวม
+                                                ราคาต่อชิ้น
                                             </th>
                                             <th class="text-left">
-                                                ที่อยู่จัดส่ง
+                                                ราคารวม
                                             </th>
                                             <th class="text-left">
                                                 สถานะการชำระเงิน
                                             </th>
                                             <th class="text-left">
-                                                สถานะการจัดส่ง
+                                                สถานะการการจัดส่ง
+                                            </th>
+                                            <th class="text-left">
+                                                เครื่องมือ
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="order in order" :key="order._id">
+                                        <tr v-for="order in order" :key="order.user_id">
+                                            <td>{{ order.orde_id }}</td>
                                             <td>รูปสินค้า</td>
-                                            <td><div v-for="item in product" :key="item._id">{{ item._id === order.idproduct ? item.name : '' }}</div></td>
-                                            <td>{{ order.qty }}</td>
-                                            <td>{{ order.sumprice }}</td>
-                                            <td>{{ order.address }}</td>
-                                           <td>สถานะการชำระเงิน</td>
                                             <td>
-
-                                                <!-- <router-link :to="`/SL_update/${product._id}`" class="text-decoration-none">
-                                    <v-btn color="success" class="mr-2">แก้ไข</v-btn> 
-                                        </router-link> -->
-                                                <v-btn @click.prevent="deleteProduct(order._id)" color="success"
-                                                    class="mr-2">
-                                                    จัดส่งแล้ว
+                                                <div v-for="item in product" :key="item.product_id">
+                                                    {{ item.product_id === order.product_id ? item.product_name : '' }}
+                                                </div>
+                                            </td>
+                                            <td>{{ order.product_number }}</td>
+                                            <td>
+                                                <div v-for="item in product" :key="item.product_id">
+                                                    {{ item.product_id === order.product_id ? item.product_price : '' }}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div v-for="item in product" :key="item.product_id">
+                                                    {{
+                                                        item.product_id === order.product_id ?
+                                                            item.product_price * order.product_number : ''
+                                                    }}
+                                                </div>
+                                            </td>
+                                            <td>{{ order.payment_status }}</td>
+                                            <td>{{ order.is_delivery }}</td>
+                                            <td>
+                                                <router-link :to="`/SL_isdelivery/${order.orde_id}`" class="text-decoration-none text-black mr-2">
+                                                <v-btn
+                                                    color="success">
+                                                    จัดส่งสินค้า
                                                 </v-btn>
-                                                <v-btn @click.prevent="deleteProduct(order._id)" color="red">
-                                                    ลบ
-                                                </v-btn>
+                                            </router-link>
 
+                                                <v-btn @click="deleteOrderInOrder(order.orde_id)" color="red">
+                                                    ยกเลิกคำสั่งซื้อ
+                                                </v-btn>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -159,67 +164,99 @@
 
 <script>
 import axios from 'axios';
-
+import setAuthheader from "../utils/setAuthheader";
 export default {
     data() {
         return {
             order: [],
             product: [],
-            user: [],
-            apiURL: 'http://localhost:4000/api',
-
         }
+        
     },
-    computed: {
+    computed:{
         recordsCount() {
             return this.order.length;
         },
     },
     async created() {
-        await this.orderview()
-        await this.viewProduct()
-        
+        setAuthheader(localStorage.getItem("token"))
+        await this.GetOrderDetail()
+        await this.GetProductDetail()
+
+
     },
     methods: {
-        deleteProduct(id) {
-            let apiURL = `http://localhost:4000/api/delete-buy/${id}`;
-            let indexOfArrayItem = this.order.findIndex(i => i._id === id);
-
-            if (window.confirm("Do you really want to delete?")) {
-                axios.delete(apiURL).then(() => {
-                    this.order.splice(indexOfArrayItem, 1)
-                }).catch(error => {
-                    console.log(error)
-                })
-            }
-        },
-        async viewProduct() {
+        async deleteOrderInOrder(orde_id) {
+            console.log(orde_id)
             try {
-                const resp = await axios.get(this.apiURL, {
-                    headers: {
-                        Authorization: "Bearer " + localStorage.getItem("token")
-                    }
+                const resp = await axios.delete(`http://localhost:3001/api/order/${orde_id}`, {
+                    orde_id: this.order.orde_id
                 })
-                this.product = resp.data
+                this.order = resp.data.data
+                this.$router.go()
+
+
             } catch (e) {
-                if (e.response.status === 403) {
-                    alert("Token Exception")
-                    this.$router.push('/login');
-                } else if (e.response.status === 401) {
-                    alert("Go to Login")
-                    this.$router.push('/login');
-                }
+                // if (e.response.status === 403) {
+                //     alert("Token Exception")
+                //     this.$router.push('/login');
+                // } else if (e.response.status === 401) {
+                //     alert("Go to Login")
+                //     this.$router.push('/login');
+                // }
                 console.log(e)
             }
         },
-        orderview() {
-            let apiURL = 'http://localhost:4000/api/get-order';
-            axios.get(apiURL).then(res => {
-                this.order = res.data
-            }).catch(error => {
-                console.log(error)
-            })
+        async AddProductToOrder(product_id, product_name) {
+            try {
+                const resp = await axios.post(`http://localhost:3001/api/create-order-to-cart/${product_id},${product_name}`, {
+                    product_id: this.product.product_id,
+                    product_number: this.product.product_number
+                })
+                this.order = resp.data.data[0]
+
+            } catch (e) {
+                // if (e.response.status === 403) {
+                //     alert("Token Exception")
+                //     this.$router.push('/login');
+                // } else if (e.response.status === 401) {
+                //     alert("Go to Login")
+                //     this.$router.push('/login');
+                // }
+                console.log(e)
+            }
         },
+        async GetOrderDetail() {
+            try {
+                const resp = await axios.get('http://localhost:3001/api/GetCart-forOder')
+                this.order = resp.data.data
+
+            } catch (e) {
+                // if (e.response.status === 403) {
+                //     alert("Token Exception")
+                //     this.$router.push('/login');
+                // } else if (e.response.status === 401) {
+                //     alert("Go to Login")
+                //     this.$router.push('/login');
+                // }
+                console.log(e)
+            }
+        },
+        async GetProductDetail() {
+            try {
+                const resp = await axios.get('http://localhost:3001/api/product')
+                this.product = resp.data.data
+            } catch (e) {
+                // if (e.response.status === 403) {
+                //     alert("Token Exception")
+                //     this.$router.push('/login');
+                // } else if (e.response.status === 401) {
+                //     alert("Go to Login")
+                //     this.$router.push('/login');
+                // }
+                console.log(e)
+            }
+        }
     }
 }
 </script>

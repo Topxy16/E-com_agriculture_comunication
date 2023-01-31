@@ -5,8 +5,8 @@
             </v-row>
             <v-row no-gutters class="justify-center">
 
-                <v-col cols="6">
-                    <h2 class="mb-3">คำสั่งซื้อของคุณ</h2>
+                <v-col cols="8">
+                    <h2 class="mb-3">คำสั่งซื้อ</h2>
                     <v-hover v-slot="{ isHovering, props }" open-delay="200">
                         <v-card :elevation="isHovering ? 16 : 2" :class="{ 'on-hover': isHovering }" class="mx-auto"
                             max-width="" v-bind="props">
@@ -35,6 +35,9 @@
                                             <th class="text-left">
                                                 สถานะการชำระเงิน
                                             </th>
+                                            <th class="text-left">
+                                                เครื่องมือ
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -52,18 +55,24 @@
                                                     {{ item.product_id === order.product_id ? item.product_price : '' }}
                                                 </div>
                                             </td>
-                                            <td><div v-for="item in product" :key="item.product_id">
-                                                    {{ item.product_id === order.product_id ? item.product_price*order.product_number : '' }}
-                                                </div></td>
                                             <td>
-                                                <v-btn
-                                                    @click="AddProductToOrder(product.product_id, product.product_number)"
-                                                    color="success" class="mr-2">
-                                                    ชำระเงิน
-                                                </v-btn>
-
-                                                <v-btn @click="deleteOrderInCart(cart.orde_id)" color="red">
-                                                    ลบสินค้าออกจากตะกร้า
+                                                <div v-for="item in product" :key="item.product_id">
+                                                    {{
+                                                        item.product_id === order.product_id ?
+                                                            item.product_price * order.product_number : ''
+                                                    }}
+                                                </div>
+                                            </td>
+                                            <td>{{ order.payment_status }}</td>
+                                            <td>
+                                                <router-link :to="`/BY_Payment/${order.orde_id}`"
+                                                    class="text-decoration-none text-black">
+                                                    <v-btn color="success" class="mr-2">
+                                                        ชำระเงิน
+                                                    </v-btn>
+                                                </router-link>
+                                                <v-btn @click="deleteOrderInOrder(order.orde_id)" color="red">
+                                                    ยกเลิกคำสั่งซื้อ
                                                 </v-btn>
                                             </td>
                                         </tr>
@@ -72,9 +81,8 @@
                             </v-card-text>
                         </v-card>
                     </v-hover>
-
-
                 </v-col>
+                
             </v-row>
         </v-container>
     </v-img>
@@ -98,34 +106,15 @@ export default {
 
     },
     methods: {
-        async deleteOrderInCart(orde_id) {
+        async deleteOrderInOrder(orde_id) {
             console.log(orde_id)
             try {
                 const resp = await axios.delete(`http://localhost:3001/api/order/${orde_id}`, {
                     orde_id: this.order.orde_id
                 })
                 this.order = resp.data.data
-                this.$router.push('/by_cart');
+                this.$router.go()
 
-
-            } catch (e) {
-                // if (e.response.status === 403) {
-                //     alert("Token Exception")
-                //     this.$router.push('/login');
-                // } else if (e.response.status === 401) {
-                //     alert("Go to Login")
-                //     this.$router.push('/login');
-                // }
-                console.log(e)
-            }
-        },
-        async AddProductToOrder(product_id, product_name) {
-            try {
-                const resp = await axios.post(`http://localhost:3001/api/create-order-to-cart/${product_id},${product_name}`, {
-                    product_id: this.product.product_id,
-                    product_number: this.product.product_number
-                })
-                this.order = resp.data.data[0]
 
             } catch (e) {
                 // if (e.response.status === 403) {
