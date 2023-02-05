@@ -1,6 +1,4 @@
 <template>
-
-
     <v-container fluid>
         <v-carousel height="400" hide-delimiters progress="primary">
             <v-carousel-item v-for="(slide, i) in slides" :key="i">

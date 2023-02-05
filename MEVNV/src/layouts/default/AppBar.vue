@@ -5,12 +5,12 @@
       <router-link :to="`/SL_dashboard`" class="text-decoration-none text-white">
         <v-btn icon="mdi-home"></v-btn>
       </router-link>
-      <router-link to="/login" class="text-decoration-none text-white" v-if="token === null">
+      <router-link :to="`/Login`" class="text-decoration-none text-white">
         <v-btn icon="mdi-login-variant"></v-btn>
       </router-link>
-      <router-link to="/logout" class="text-decoration-none text-white" v-else>
-        <v-btn icon="mdi-logout-variant"></v-btn>
-      </router-link>
+
+        <v-btn @click.prevent="Logout()" icon="mdi-logout-variant"></v-btn>
+ 
     </template>
   </v-app-bar>
   <v-navigation-drawer expand-on-hover rail>
@@ -31,7 +31,7 @@
       <v-list-item prepend-icon="mdi-cart" title="Your Cart" :to="item.link4"></v-list-item>
       <v-list-item prepend-icon="mdi-clipboard" title="Your Order" :to="item.link7"></v-list-item>
       <v-list-item prepend-icon="mdi-store" title="Store" :to="item.link5"></v-list-item>
-    
+
 
       <v-list-item prepend-icon="mdi-store-edit" title="Store Create" :to="item.link6"></v-list-item>
     </v-list>
@@ -72,8 +72,23 @@ export default {
   },
   updated() {
     this.token = localStorage.getItem('token');
+  },
+  methods: {
+    async Logout() {
+      try {
+        const resp = await axios.post('http://localhost:3001/auth/logout');
+        resp.statusCode = 200;
+      } catch (e) {
+        // if (e.response.status === 403) {
+        //     alert("Token Exception")
+        //     this.$router.push('/login');
+        // } else if (e.response.status === 401) {
+        //     alert("Go to Login")
+        //     this.$router.push('/login');
+        // }
+        console.log(e)
+      }
+    },
   }
 }
-
-  //
 </script>

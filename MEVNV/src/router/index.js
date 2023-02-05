@@ -22,6 +22,7 @@ import UpdateUser_address from "@/components/UpdateUser_address.vue";
 import UpdateUserInfo from "@/components/UpdateUserInfo.vue";
 import BY_Payment from "@/components/BY_Payment.vue";
 import SL_isdelivery from "@/components/SL_isdelivery.vue";
+import SL_uploadfile from "@/components/SL_uploadfile.vue";
 
 const routes = [
   {
@@ -146,6 +147,11 @@ const routes = [
         path: '/SL_isdelivery/:id',
         name: 'SL_isdelivery',
         component: SL_isdelivery
+      },
+      {
+        path: '/SL_uploadfile',
+        name: 'SL_uploadfile',
+        component: SL_uploadfile
       },
     ],
   },

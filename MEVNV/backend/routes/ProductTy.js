@@ -11,10 +11,9 @@ router.get('/product-type', (req, res) => {
         message: err.message
       })
     } else {
-      return res.status(200).send({
-        data,
-        total: data.length
-      })
+      return res.status(200).send(
+        data
+      )
     }
   })
 })

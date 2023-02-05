@@ -133,16 +133,35 @@ router.get('/product/detail/:id', (req, res) => {
   })
 
 })
+// get ALL Product Detail
+router.get('/alldetail', (req, res) => {
+  db.query(
+    `select * from product_detail`,
+    (err, data) => {
+      if (err) {
+        return res.status(401).send({
+          message: err.message
+        })
+      } else {
+        return res.status(200).json({
+          data: data,
+          total: data.length
+        })
+      }
+    }
+  )
+})
 // create Product
 router.post('/product', [authJwt.verifyToken, authJwt.isStore], (req, res) => {
   const user_id = req.user.user_id
-  const py_id = req.body.product_type_id
+  const product_type_id = req.body.product_type_id
   const product_name = req.body.product_name
   const product_price = req.body.product_price
   const product_number = req.body.product_number
+  const description = req.body.description
   let store_id = 0
   db.query(
-    `select * from user_role where user_id = ${user_id} and role_id = 2;`,
+    `select * from user_role where user_id = ${user_id} and role_id = 3;`,
     (err, data) => {
       if (err) {
         return res.status(401).send({
@@ -151,7 +170,7 @@ router.post('/product', [authJwt.verifyToken, authJwt.isStore], (req, res) => {
       } else {
         store_id = data[0].store_id
         db.query(
-          `insert into product (py_id, product_name, product_price, store_id, product_number, post_date) values (${py_id},'${product_name}', '${product_price}', ${store_id}, '${product_number}', now());`,
+          `insert into product (py_id, product_name, product_price, store_id, product_number, description, post_date) values (${product_type_id},'${product_name}', '${product_price}', ${store_id}, '${product_number}', '${description}', now());`,
           (err, result) => {
             if (err) {
               return res.status(401).send({
@@ -177,7 +196,7 @@ router.post(
   [authJwt.verifyToken, authJwt.isStore],
   (req, res) => {
     const product_id = req.params.product_id
-    const pd_description = req.body.product_detail
+    const product_detail = req.body.product_detail
     db.query(
       `select * from product where product_id = ${product_id}`,
       (err, data) => {
@@ -192,7 +211,7 @@ router.post(
             })
           } else {
             db.query(
-              `insert into product_detail (product_id, pd_description) values (${product_id}, '${pd_description}');`,
+              `insert into product_detail (product_id, pd_description) values (${product_id}, '${product_detail}');`,
               (err, data) => {
                 if (err) {
                   return res.status(401).send({
@@ -218,10 +237,11 @@ router.patch(
   [authJwt.verifyToken, authJwt.isStore],
   (req, res) => {
     const product_id = req.params.product_id
-    const py_id = req.body.product_type_id
+    const py_id = req.body.py_id
     const product_name = req.body.product_name
     const product_price = req.body.product_price
     const product_number = req.body.product_number
+    const description = req.body.description
     db.query(
       `select * from product where product_id = ${product_id};`,
       (err, data) => {
@@ -236,7 +256,7 @@ router.patch(
             })
           } else {
             db.query(
-              `update product set py_id = ${py_id}, product_name = '${product_name}', product_price = '${product_price}', product_number = ${product_number} where product_id = ${product_id}`,
+              `update product set py_id = '${py_id}' product_name = '${product_name}', product_price = '${product_price}', product_number = ${product_number}, description = '${description}' where product_id = ${product_id}`,
               (err, result) => {
                 if (err) {
                   return res.status(401).send({

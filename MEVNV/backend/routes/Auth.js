@@ -113,6 +113,30 @@ router.post('/login', userMiddleware.validateRegister, (req, res, next) => {
     }
   )
 })
+
+router.delete('/logout', async (req, res) => {
+  try {
+    const { refreshToken } = req.user
+    if(!refreshToken) throw createErroe.BadRequest()
+    const user_id = await verifyRefreshToken(refreshToken)
+    client.DEL(user_id, (err, val) => {
+      if (err){
+        console.log(err.massage)
+        throw createError.InternalServerError()
+      }
+      console.log(val)
+      res.sendStatus(204)
+    })
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.post('/logout',(req, res) => {
+  token = undefined
+  res.send("logout")
+})
+
 router.get('/getuser', authJwt.verifyToken, (req, res, next) => {
   //   console.log(req.user);
   res.send(req.user)

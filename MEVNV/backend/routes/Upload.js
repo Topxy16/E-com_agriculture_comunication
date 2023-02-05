@@ -16,7 +16,6 @@ router.post(
       const result = await cloudinary.uploader.upload(req.file.path, {
         folder: 'image'
       })
-
       db.query(
         `select * from db_image where product_id = ${product_id};`,
         (err, result1) => {
