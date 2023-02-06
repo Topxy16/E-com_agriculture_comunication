@@ -67,9 +67,10 @@ router.post('/sign-up', userMiddleware.validateRegister, (req, res, next) => {
 
 router.post('/login', userMiddleware.validateRegister, (req, res, next) => {
   db.query(
-    `SELECT user.f_name, user.user_id, role.role_id, role.role_name FROM user 
+    `SELECT user.f_name, user.user_id, role.role_id, role.role_name, store.store_id FROM user 
       LEFT JOIN user_role ON user_role.user_id = user.user_id 
       LEFT JOIN role ON user_role.role_id = role.role_id  
+      LEFT JOIN store ON user_role.store_id = store.store_id  
       WHERE username = '${req.body.username}' AND password = '${req.body.password}';`,
     (err, result) => {
       // user does not exists
@@ -88,7 +89,8 @@ router.post('/login', userMiddleware.validateRegister, (req, res, next) => {
             f_name: result[0].f_name,
             role_id: result[0].role_id,
             role_name: result[0].role_name,
-            user_id: result[0].user_id
+            user_id: result[0].user_id,
+            store_id: result[0].store_id,
           }
           const secret = process.env.ACCESS_TOKEN_SECRET
           const options = {

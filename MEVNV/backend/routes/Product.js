@@ -133,24 +133,31 @@ router.get('/product/detail/:id', (req, res) => {
   })
 
 })
-// get ALL Product Detail
-router.get('/alldetail', (req, res) => {
-  db.query(
-    `select * from product_detail`,
-    (err, data) => {
-      if (err) {
-        return res.status(401).send({
-          message: err.message
-        })
-      } else {
-        return res.status(200).json({
-          data: data,
-          total: data.length
+
+// get product by store id
+router.get('/product-by-storeID', [authJwt.verifyToken], (req, res) => {
+  const store_id = req.user.store_id
+  db.query(`select * from product where store_id = '${store_id}';`, (err, data) => {
+    if (err) {
+      return res.status(400).send({
+        code: err.code,
+        message: err.message
+      })
+    } else {
+      if (data.length === 0) {
+        return res.status(404).send({
+          message: 'store_id not found'
         })
       }
+      return res.status(200).send({
+        data
+      })
     }
-  )
+  })
 })
+
+
+
 // create Product
 router.post('/product', [authJwt.verifyToken, authJwt.isStore], (req, res) => {
   const user_id = req.user.user_id
@@ -256,7 +263,7 @@ router.patch(
             })
           } else {
             db.query(
-              `update product set py_id = '${py_id}' product_name = '${product_name}', product_price = '${product_price}', product_number = ${product_number}, description = '${description}' where product_id = ${product_id}`,
+              `update product set py_id = '${py_id}', product_name = '${product_name}', product_price = '${product_price}', product_number = ${product_number}, description = '${description}' where product_id = ${product_id}`,
               (err, result) => {
                 if (err) {
                   return res.status(401).send({

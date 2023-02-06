@@ -8,7 +8,7 @@
                         <v-card :elevation="isHovering ? 16 : 2" :class="{ 'on-hover': isHovering }"
                             class="mx-auto mr-5" height="150" max-width="400" v-bind="props" title="จัดการร้านค้า">
                             <v-card-text class="text-center">
-
+                                <div class="mt-3">
                                 <router-link :to="`/SL_productcreate`" class="text-decoration-none text-black">
                                     <v-btn prepend-icon="mdi-clipboard-edit" variant="outlined" class="mr-2">
                                         เพิ่มสินค้า
@@ -19,11 +19,7 @@
                                         ดูหน้าร้านค้า
                                     </v-btn>
                                 </router-link>
-                                <router-link :to="`/SL_viewproduct`" class="text-decoration-none text-black">
-                                    <v-btn prepend-icon="mdi-clipboard-text" variant="outlined" class="">
-                                        ดูหน้าร้านค้า
-                                    </v-btn>
-                                </router-link>
+                            </div>
                             </v-card-text>
 
                         </v-card>
@@ -76,7 +72,7 @@
 
                 <v-col cols="12">
                     <v-hover v-slot="{ isHovering, props }" open-delay="200">
-                        <v-card :elevation="isHovering ? 16 : 2" :class="{ 'on-hover': isHovering }" class="mx-auto"
+                        <v-card :elevation="isHovering ? 16 : 2" :class="{ 'on-hover': isHovering }" width="1725" class="mx-auto"
                              v-bind="props">
                             <v-card-text>
                                 <v-table>

@@ -120,7 +120,7 @@ export default {
         },
         async viewProduct() {
             try {
-                const resp = await axios.get(`http://localhost:3001/api/product`)
+                const resp = await axios.get(`http://localhost:3001/api/product-by-storeID`)
                 this.product = resp.data.data
             } catch (e) {
                 // if (e.response.status === 403) {
