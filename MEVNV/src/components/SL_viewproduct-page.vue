@@ -3,15 +3,18 @@
     <v-img src="@/assets/9.png" class="responsive">
         <v-container fluid>
             <v-row class="mt-5 justify-center">
-                <v-col cols="10" class="mt-5">
+                <v-col cols="12" class="mt-5">
                     <h1 class="mb-5">จัดการสินค้า</h1>
                     <v-table>
                         <thead>
                             <tr>
-                                <th class="t">
-                                    ชื่อสินค้า
-                                </th>
                                 <th class="">
+                                    สินค้า
+                                </th>
+                                <th class="" width="200">
+                                    
+                                </th>
+                                <th class="" width="400">
                                     รายละเอียด
                                 </th>
                                 <th class="">
@@ -34,6 +37,7 @@
                         <tbody>
                             <tr v-for="product in product" :key="product.product_id">
                                 <td>{{ product.product_name }}</td>
+                                <td><v-img :src="(`/src/assets/${product.image}`)" max-height="100"></v-img></td>
                                 <td>{{ product.description }}</td>
                                 <td>{{ product.product_price }}</td>
                                 <td>{{ product.product_number }}</td>                          
@@ -62,6 +66,9 @@
                         </tbody>
                     </v-table>
                 </v-col>
+                <!-- <v-col cols="6">
+                    <v-img :src="(`/src/assets/${store.QrCode}`)"></v-img>
+                </v-col> -->
             </v-row>
         </v-container>
     </v-img>
@@ -75,14 +82,17 @@ export default {
         return {
             product: [],
             ptype: [],
+            store: [],
 
 
         }
     },
     async created() {
         setAuthheader(localStorage.getItem("token"))
-        this.viewProduct()
-        this.getProductType()
+        await this.viewProduct()
+        await this.getProductType()
+        await this.getStoreinfo()
+        
 
     },
     methods: {
@@ -153,6 +163,21 @@ export default {
                 console.log(e)
             }
         },
+        async getStoreinfo(store_id) {
+            try {
+                const resp = await axios.get(`http://localhost:3001/api/storeqr/${store_id}`,)
+                this.store = resp.data.data[0]
+            } catch (e) {
+                // if (e.response.status === 403) {
+                //     alert("Token Exception")
+                //     this.$router.push('/login');
+                // } else if (e.response.status === 401) {
+                //     alert("Go to Login")
+                //     this.$router.push('/login');
+                // }
+                console.log(e)
+            }
+        }
 
     }
 }

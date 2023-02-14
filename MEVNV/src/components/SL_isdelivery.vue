@@ -3,10 +3,10 @@
         <v-container class="mt-5">
             <v-row class="mb-6" no-gutters>
             </v-row>
-            <v-row no-gutters class="">
+            <v-row no-gutters class="justify-center">
 
                 <v-col cols="6">
-                    <h2 class="mb-3">เพิ่มข้อมูลที่อยู่</h2>
+                    <h2 class="mb-3">ข้อมูลออร์เดอร์</h2>
                     <v-card class="" max-width="" height="">
                         <v-card-item>
                             <v-table>
@@ -29,6 +29,9 @@
                                         </th>
                                         <th class="text-left">
                                             ราคารวม
+                                        </th>
+                                        <th class="text-left">
+                                            ที่อยู่ที่ต้องจัดส่ง
                                         </th>
                                     </tr>
                                 </thead>
@@ -55,48 +58,31 @@
                                                 }}
                                             </div>
                                         </td>
-
+                                        <td>
+                                            <div v-for="item in address" :key="item.user_a_id">
+                                                {{ item.user_a_id === payment.user_a_id ? item.address : '' }}
+                                            </div>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </v-table>
                         </v-card-item>
                     </v-card>
                 </v-col>
-                <v-col cols="4" class="ml-5">
-                    <h2 class="mb-3">ที่อยู่</h2>
-                    <div class="text-center">
-                        <v-card class="mx-auto" max-width="600" height="128" v-for="item in address "
-                            :key="item.user_id">
-
-                            <div class="text-overline mb-1 text-left">
-                                <h3 class="ml-2">Address</h3>
-                            </div>
-                            <div class="text-caption">
-                                <h3> รายละเอียดที่อยู่ : {{ item.address }} </h3>
-                                <h3> จังหวัด : {{ item.province }} อำเภอ : {{ item.district }}
-                                    ตำบล : {{ item.sub_district }} รหัสไปรษณีย์ : {{ item.zip_code }} </h3>
-                                <h3> เบอร์โทร : {{ item.tel }} </h3>
-                            </div>
-
-                        </v-card>
-                    </div>
-                </v-col>
-
-
             </v-row>
-            <v-row>
-                <v-col cols="7" class="">
+            <v-row class="justify-center">
+                <v-col cols="6" class="">
                     <h2 class="mb-3">ส่งหลักฐานการจัดส่ง</h2>
                     <v-card class="" max-width="884" height="">
                         <v-card-item>
                             <v-form ref="form">
                                
                                 <v-text-field v-model="IDAddress.user_a_id" label="IDUserAddress" disabled="true" required></v-text-field>
-                                <v-text-field v-model="IDAddress.user_a_id" label="รหัสไปรษณีย์"  required></v-text-field>
+                                <v-text-field v-model="Delivery.is_delivery" label="เลขพัสดุ"  required></v-text-field>
                                
                                 <!-- <v-file-input v-model="img" label="img" required></v-file-input> -->
 
-                                <v-btn color="success" class="mr-4 w-100" @click="handleSubmitForm">
+                                <v-btn color="success" class="mr-4 w-100" @click="UpdateDeliveryStatus">
                                     ยืนยัน
                                 </v-btn>
 
@@ -123,6 +109,9 @@ export default {
             IDAddress: {
                 user_a_id: '',
             },
+            Delivery:{
+                is_delivery:'',
+            }
 
         }
     },
@@ -130,7 +119,7 @@ export default {
         setAuthheader(localStorage.getItem("token"))
         await this.GetPaymentDetail()
         await this.GetProductDetail()
-        await this.GetAddressbyID()
+        await this.GetAddressbyOrder()
         await this.GetUser_a_idbyID()
 
 
@@ -188,10 +177,11 @@ export default {
                 console.log(e)
             }
         },
-        async GetAddressbyID(user_id) {
+        async GetAddressbyOrder() {
             try {
-                const resp = await axios.get(`http://localhost:3001/api/useraddinfor/${user_id}`)
+                const resp = await axios.get(`http://localhost:3001/api/Order/Address`)
                 this.address = resp.data.data
+                console.log(this.address)
             } catch (e) {
                 // if (e.response.status === 403) {
                 //     alert("Token Exception")
@@ -218,6 +208,23 @@ export default {
                 console.log(e)
             }
         },
+        async UpdateDeliveryStatus() {
+            try {
+                    await axios.patch(`http://localhost:3001/api/delivery/${this.$route.params.id}`, {
+                    is_delivery: this.Delivery.is_delivery,
+
+                })                
+            } catch (e) {
+                // if (e.response.status === 403) {
+                //     alert("Token Exception")
+                //     this.$router.push('/login');
+                // } else if (e.response.status === 401) {
+                //     alert("Go to Login")
+                //     this.$router.push('/login');
+                // }
+                console.log(e)
+            }
+        }
     }
 }
 </script>

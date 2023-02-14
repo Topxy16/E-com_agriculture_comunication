@@ -1,54 +1,73 @@
 <template>
-    <v-container fluid>
-        <v-carousel height="400" hide-delimiters progress="primary">
-            <v-carousel-item v-for="(slide, i) in slides" :key="i">
-                <v-sheet height="100%">
-                    <div class="d-flex fill-height justify-center align-center">
-                        <div class="text-h2">
-                            {{ slide }} Slide
-                        </div>
-                    </div>
-                </v-sheet>
-            </v-carousel-item>
-        </v-carousel>
-
-        <v-row class="mt-5">
-            <v-col cols="2" v-for="product in product" :key="product.product_id">
-                <v-hover v-slot="{ isHovering, props }" open-delay="200">
-                    <v-card :elevation="isHovering ? 16 : 2" :class="{ 'on-hover': isHovering }" class="" height="450"
-                        v-bind="props">
-                        <v-card-text class="">
-
-                            <v-img cover src="https://cdn.vuetifyjs.com/images/cards/cooking.png"></v-img>
-
-                            <v-card-item>
-                                <v-card-title><b> {{ product.product_name }}</b></v-card-title>
-                                <v-card-text><b>by shop_name</b></v-card-text>
-                            </v-card-item>
-
-                            <v-card-text>
-                                <div class="text-subtitle-1">
-                                    ฿ • {{ product.product_price }}
-                                </div>
-
-                                <div>product_detail</div>
-                                <div><b>จำนวนคงเหลือ : </b>{{ product.product_number }}</div>
-                            </v-card-text>
-
-                            <v-btn @click="AddProductToCart(product.product_id)" color="success justify-sticky"
-                                class="mr-2 w-100">เพิ่มลงตะกร้าสินค้า</v-btn>
+    
+    <v-container>
 
 
-                        </v-card-text>
+        <!-- <v-row>
+            <v-col>
+                <v-card class="mx-auto" color="grey-lighten-3" max-width="">
+                    <v-card-text>
+                        <v-text-field :loading="loading" density="compact" variant="solo" label="ค้นหาสินค้า"
+                            append-inner-icon="mdi-magnify" single-line hide-details
+                            @click:append-inner="onClick"></v-text-field>
+                    </v-card-text>
+                </v-card>
 
-                    </v-card>
-                </v-hover>
             </v-col>
+        </v-row> -->
 
+
+        <v-row class="">
+            <v-col cols="2" v-for="product in product" :key="product.product_id" >
+                <v-card :loading="loading" class="mx-auto my-12" max-width="280" v-if="product.product_show === 1">
+                    <template v-slot:loader="{ isActive }">
+                        <v-progress-linear :active="isActive" color="deep-purple" height="4"
+                            indeterminate></v-progress-linear>
+                    </template>
+
+                    <v-img cover height="250" :src="(`/src/assets/${product.image}`)"></v-img>
+
+                    <v-card-item>
+                        <v-card-title>{{ product.product_name }}</v-card-title>
+
+                        <v-card-subtitle>
+                            <span class="me-1" v-for="store in store" :key="store.store_id">{{product.store_id === store.store_id ? store.store_name : ""}}</span>
+
+                            <v-icon color="error" icon="mdi-store" size="small"></v-icon>
+
+                        </v-card-subtitle>
+                    </v-card-item>
+
+                    <v-card-text>
+                        <v-row align="center" class="mx-0">
+                            <v-rating :model-value="3.5" color="amber" density="compact" half-increments readonly
+                                size="small"></v-rating>
+
+                        </v-row>
+
+                        <div class="my-4 text-subtitle-1">
+                            $ • {{ product.product_price }}
+                        </div>
+
+                        <div>{{ product.description }}</div>
+                    </v-card-text>
+
+
+                    <v-card-actions class="justify-end">
+                        <v-btn color="info" variant="text" @click="AddProductToCart(product.product_id,product.store_id,product.image)">
+                            เพิ่มลงตะกร้าสินค้า
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-col>
         </v-row>
     </v-container>
 
 </template>
+
+<style scoped>
+
+</style>
 
 <script>
 import axios from 'axios';
@@ -56,8 +75,9 @@ import setAuthheader from "../utils/setAuthheader";
 export default {
     data() {
         return {
+            title: this.$route.name,
             product: [],
-            order: [],
+            store: [],
             slides: [
                 'First',
                 'Second',
@@ -65,18 +85,31 @@ export default {
                 'Fourth',
                 'Fifth',
             ],
+            loaded: false,
+            loading: false,
         }
     },
     async created() {
         setAuthheader(localStorage.getItem("token"))
         await this.getProduct()
+        await this.getStoreinfo()
+        document.title = 'Home'
     },
     methods: {
-        async AddProductToCart(product_id) {
-            console.log(product_id)
+        onClick() {
+            this.loading = true
+
+            setTimeout(() => {
+                this.loading = false
+                this.loaded = true
+            }, 2000)
+        },
+        async AddProductToCart(product_id, store_id, image) {
             try {
-                const resp = await axios.post(`http://localhost:3001/api/create-Order-to-cart/${product_id}`, {
-                    product_id: this.product.product_id
+                const resp = await axios.post(`http://localhost:3001/api/create-Order-to-cart/${product_id},${store_id},${image}`, {
+                    product_id: this.product.product_id,
+                    store_id: this.product.store_id,
+                    image: this.product.image
                 })
                 this.order = resp.data.data[0]
             } catch (e) {
@@ -94,6 +127,22 @@ export default {
             try {
                 const resp = await axios.get('http://localhost:3001/api/product',)
                 this.product = resp.data.data
+            } catch (e) {
+                // if (e.response.status === 403) {
+                //     alert("Token Exception")
+                //     this.$router.push('/login');
+                // } else if (e.response.status === 401) {
+                //     alert("Go to Login")
+                //     this.$router.push('/login');
+                // }
+                console.log(e)
+            }
+        },
+        async getStoreinfo() {
+            try {
+                const resp = await axios.get('http://localhost:3001/api/storeinfo/byhome',)
+                this.store = resp.data.data
+                console.log(this.store)
             } catch (e) {
                 // if (e.response.status === 403) {
                 //     alert("Token Exception")

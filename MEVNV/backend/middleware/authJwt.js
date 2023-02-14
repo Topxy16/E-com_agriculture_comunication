@@ -48,7 +48,7 @@ isAdmin = async (req, res, next) => {
 
 isStore = (req, res, next) => {
   db.query(
-    `select * from user_role where user_id = ${req.user.user_id} and role_id = 3;`,
+    `select * from user_role where user_id = ${req.user.user_id} and role_id = 2;`,
     (err, data) => {
       if (err) {
         return res.status(401).send({

@@ -48,7 +48,7 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <div v-for="item in product" :key="item.product_id">
+                                            <div v-for="item in product" :key="item.product_id" class="text-green">
                                                 {{
                                                     item.product_id === payment.product_id ?
                                                         item.product_price * payment.product_number : ''
@@ -81,26 +81,36 @@
                         </v-card>
                     </div>
                 </v-col>
-
-
             </v-row>
             <v-row>
-                <v-col cols="7" class="">
+                <v-col cols="6" class="">
                     <h2 class="mb-3">ส่งหลักฐานการชำระเงิน</h2>
-                    <v-card class="" max-width="884" height="">
+                    <v-card class="" max-width="" height="520">
                         <v-card-item>
                             <v-form ref="form">
-                               
-                                <v-text-field v-model="IDAddress.user_a_id" label="IDUserAddress" disabled="true" required></v-text-field>
-                                <v-file-input label="File input"></v-file-input>
+
+                                <v-text-field v-model="IDAddress.user_a_id" label="IDUserAddress" disabled="true"
+                                    required></v-text-field>
+                                <v-img src="https://picsum.photos/350/165?random" height="275" class="mb-3"></v-img>
+                                <v-file-input v-model="file" type="file" @change="showfile()" placeholder="Pick an image"
+                            prepend-icon="mdi-camera" label="img" required>
+                        </v-file-input>
                                 <!-- <v-file-input v-model="img" label="img" required></v-file-input> -->
 
-                                <v-btn color="success" class="mr-4 w-100" @click="handleSubmitForm">
+                                <v-btn color="success" class="mr-4 w-100" @click="UpdatePaymentstatus">
                                     ยืนยัน
                                 </v-btn>
 
 
                             </v-form>
+                        </v-card-item>
+                    </v-card>
+                </v-col>
+                <v-col cols="5" class="">
+                    <h2 class="mb-3">ช่องทางการชำระเงินของร้านค้า</h2>
+                    <v-card class="" max-width="600" height="">
+                        <v-card-item>
+                            <v-img :src="(`/src/assets/${store.QrCode}`)" max-height="500" max-width=""></v-img>
                         </v-card-item>
                     </v-card>
                 </v-col>
@@ -119,9 +129,11 @@ export default {
             payment: [],
             product: [],
             address: [],
+            store: [],
             IDAddress: {
                 user_a_id: '',
             },
+            file: "",
 
         }
     },
@@ -131,6 +143,7 @@ export default {
         await this.GetProductDetail()
         await this.GetAddressbyID()
         await this.GetUser_a_idbyID()
+        await this.GetQRcode()
 
 
     },
@@ -216,6 +229,42 @@ export default {
                 // }
                 console.log(e)
             }
+        },
+        async GetQRcode() {
+            try {
+                const resp = await axios.get(`http://localhost:3001/api/storeinfo/byhome`)
+                this.store = resp.data.data[0]
+            } catch (e) {
+                // if (e.response.status === 403) {
+                //     alert("Token Exception")
+                //     this.$router.push('/login');
+                // } else if (e.response.status === 401) {
+                //     alert("Go to Login")
+                //     this.$router.push('/login');
+                // }
+                console.log(e)
+            }
+        },
+        async UpdatePaymentstatus() {
+            try {
+                const formData = new FormData()
+                formData.append('file', this.file[0])
+                formData.append('user_a_id', this.IDAddress.user_a_id)
+                await axios.patch(`http://localhost:3001/api/payment/${this.$route.params.id}`, formData)
+                this.$router.push('/by_order');
+            } catch (e) {
+                // if (e.response.status === 403) {
+                //     alert("Token Exception")
+                //     this.$router.push('/login');
+                // } else if (e.response.status === 401) {
+                //     alert("Go to Login")
+                //     this.$router.push('/login');
+                // }
+                console.log(e)
+            }
+        },
+        async showfile() {
+            console.log(this.file[0])
         },
     }
 }

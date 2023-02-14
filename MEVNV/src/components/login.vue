@@ -1,11 +1,20 @@
 <template>
   <v-img src="@/assets/9.png" class="responsive">
-    <v-container fluid>
-      <v-row class="mt-5 justify-center">
-        <v-col cols="3" class="mt-5">
-          <h1 class="mb-5">เข้าสู่ระบบ</h1>
-
-          <form @submit.prevent="handleSubmitForm">
+    <v-container>    
+      <v-card class="mt-5 align-self-center" color="#a8c8b1" height="">
+                <v-row class="justify-center">
+                    <v-col cols="3" class="align-self-center mr-5">
+                        <div ><v-img src="../assets/logo3.png"></v-img> </div>
+                    </v-col>
+                    <v-col cols="3" class="align-self-center">
+                        <h2 class="mb-2">เข้าสู่ระบบ</h2>
+                        <v-card>
+                            <v-card-item>
+                                <v-alert v-show="showAlert" dense outlined type="error">
+                                    {{ alertMessage }}
+                                </v-alert>
+                            
+                                  <form @submit.prevent="handleSubmitForm">
             <v-text-field v-model="user.username" label="ชื่อผู้ใช้งาน" required></v-text-field>
             <v-text-field v-model="user.password" type="password" label="รหัสผ่าน" required></v-text-field>
 
@@ -13,8 +22,12 @@
               เข้าสู่ระบบ
             </v-btn>
           </form>
-        </v-col>
-      </v-row>
+                      
+                            </v-card-item>
+                        </v-card>
+                    </v-col>
+                </v-row>
+            </v-card>
     </v-container>
   </v-img>
 </template>
@@ -52,7 +65,7 @@ export default {
           } else if (data.data.user.role_name == "store") {
             this.$router.push('/sl_dashboard');
           } else {
-            this.$router.push('/by_home');
+            this.$router.push('/');
           }
 
         })

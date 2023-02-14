@@ -5,10 +5,12 @@
             </v-row>
             <v-row no-gutters class="justify-center">
 
-                <v-col cols="4">
+                <v-col cols="3">
                     <h2 class="mb-3">เพิ่มข้อมูลที่อยู่</h2>
 
-                    <v-form ref="form">
+                    <v-card>
+                        <v-card-item>
+                            <v-form ref="form">
                         <v-text-field v-model="userinfo.f_name" label="ชื่อ" required></v-text-field>
                         <v-text-field v-model="userinfo.l_name" label="สกุล" required></v-text-field>
 
@@ -19,6 +21,9 @@
                         </v-btn>
 
                     </v-form>
+                        </v-card-item>
+                    </v-card>
+                 
 
 
 

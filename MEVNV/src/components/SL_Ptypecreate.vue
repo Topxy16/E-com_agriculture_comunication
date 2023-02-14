@@ -5,19 +5,21 @@
                 <v-col cols="3" class="mt-5">
                     <h1 class="mb-5">เพิ่มประเภทข้อมูลสินค้า</h1>
 
-                    <v-form ref="form">
-
+                    <v-card>
+                        <v-card-item>
+                            <v-form ref="form">
                         <v-text-field v-model="product_type.name" label="ประเภท" required></v-text-field>
-                        <!-- <v-file-input v-model="img" label="img" required></v-file-input> -->
-
                         <v-btn color="success" class="mr-4 w-100" @click.prevent="handleSubmitForm">
                             เพิ่ม
                         </v-btn>
-
                     </v-form>
+                        </v-card-item>
+                    </v-card>
+                   
 
                 </v-col>
                 <v-col cols="5">
+                    <h1 class="mb-5 mt-5">ประเภทสินค้า</h1>
                     <v-hover v-slot="{ isHovering, props }" open-delay="200">
                         <v-card :elevation="isHovering ? 16 : 2" :class="{ 'on-hover': isHovering }" class="mx-auto"
                             max-width="1280" v-bind="props">
@@ -38,8 +40,8 @@
                                     </thead>
                                     <tbody>
                                         <tr v-for="item in typeshow" :key="item.product_type_id">                                         
-                                            <td>{{ item.product_type_name }}</td>
                                             <td>{{ item.product_type_id }}</td>                                      
+                                            <td>{{ item.product_type_name }}</td>
                                             <td>
                                                 <v-btn @click.prevent="deletePtype(item.product_type_id)" color="red">
                                                     ลบ
@@ -79,8 +81,7 @@ export default {
     },
     async created() {
         setAuthheader(localStorage.getItem("token"))
-        await this.getProductType()
-        
+        await this.getProductType()        
     },
     methods: {
         async deletePtype(product_type_id) {
@@ -122,7 +123,7 @@ export default {
         async getProductType() {
             try {
                 const resp = await axios.get('http://localhost:3001/api/product-type')
-                this.typeshow = resp.data.data
+                this.typeshow = resp.data
 
             } catch (e) {
                 // if (e.response.status === 403) {

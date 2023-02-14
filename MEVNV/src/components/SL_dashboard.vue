@@ -1,79 +1,20 @@
 <template>
     <v-img src="@/assets/9.png" class="responsive">
-        <v-container class="mt-5">
-            <v-row class="mb-6 justify-center" no-gutters>
-                <v-col>
-
-                    <v-hover v-slot="{ isHovering, props }" open-delay="200">
-                        <v-card :elevation="isHovering ? 16 : 2" :class="{ 'on-hover': isHovering }"
-                            class="mx-auto mr-5" height="150" max-width="400" v-bind="props" title="จัดการร้านค้า">
-                            <v-card-text class="text-center">
-                                <div class="mt-3">
-                                <router-link :to="`/SL_productcreate`" class="text-decoration-none text-black">
-                                    <v-btn prepend-icon="mdi-clipboard-edit" variant="outlined" class="mr-2">
-                                        เพิ่มสินค้า
-                                    </v-btn>
-                                </router-link>
-                                <router-link :to="`/SL_viewproduct`" class="text-decoration-none text-black">
-                                    <v-btn prepend-icon="mdi-clipboard-text" variant="outlined" class="">
-                                        ดูหน้าร้านค้า
-                                    </v-btn>
-                                </router-link>
-                            </div>
-                            </v-card-text>
-
-                        </v-card>
-                    </v-hover>
-
-                </v-col>
-
-                <v-col>
-
-                    <v-hover v-slot="{ isHovering, props }" open-delay="200">
-                        <v-card :elevation="isHovering ? 16 : 2" :class="{ 'on-hover': isHovering }"
-                            class="mx-auto mr-5" height="150" max-width="400" v-bind="props" title="จำนวนออเดอร์">
-                            <v-card-text class="mt-6 text-center">
-                                <h1>{{ recordsCount }}</h1>
-                            </v-card-text>
-                        </v-card>
-                    </v-hover>
-
-                </v-col>
-
-                <v-col>
-
-                    <v-hover v-slot="{ isHovering, props }" open-delay="200">
-                        <v-card :elevation="isHovering ? 16 : 2" :class="{ 'on-hover': isHovering }"
-                            class="mx-auto mr-5" height="150" max-width="400" v-bind="props" title="ยังไม่ชำระเงิน">
-                            <v-card-text class="mt-12 text-center">
-
-                            </v-card-text>
-                        </v-card>
-                    </v-hover>
-
-                </v-col>
-
-                <v-col>
-
-                    <v-hover v-slot="{ isHovering, props }" open-delay="200">
-                        <v-card :elevation="isHovering ? 16 : 2" :class="{ 'on-hover': isHovering }" class="mx-auto "
-                            height="150" max-width="400" v-bind="props" title="ยังไม่จัดส่ง">
-                            <v-card-text class="mt-12 text-center">
-
-                            </v-card-text>
-                        </v-card>
-                    </v-hover>
-
+        <v-container>
+            <v-row class="mb-3 mt-5">
+                <v-col cols="12">
+                    <v-card>
+                        <v-card-item>
+                            <h3>จำนวนออร์เดอร์ : {{ recordsCount }}</h3>
+                        </v-card-item>
+                    </v-card>
                 </v-col>
             </v-row>
-
             <v-row no-gutters>
-                
-
                 <v-col cols="12">
                     <v-hover v-slot="{ isHovering, props }" open-delay="200">
-                        <v-card :elevation="isHovering ? 16 : 2" :class="{ 'on-hover': isHovering }" width="1725" class="mx-auto"
-                             v-bind="props">
+                        <v-card :elevation="isHovering ? 16 : 2" :class="{ 'on-hover': isHovering }" width=""
+                            class="mx-auto" v-bind="props">
                             <v-card-text>
                                 <v-table>
                                     <thead>
@@ -110,7 +51,9 @@
                                     <tbody>
                                         <tr v-for="order in order" :key="order.user_id">
                                             <td>{{ order.orde_id }}</td>
-                                            <td>รูปสินค้า</td>
+                                            <td>                                  
+                                                <v-img height="150" :src="(`/src/assets/${order.image}`)"></v-img>                                     
+                                            </td>
                                             <td>
                                                 <div v-for="item in product" :key="item.product_id">
                                                     {{ item.product_id === order.product_id ? item.product_name : '' }}
@@ -130,15 +73,15 @@
                                                     }}
                                                 </div>
                                             </td>
-                                            <td>{{ order.payment_status }}</td>
+                                            <td><v-img :src="(`/src/assets/${order.payment_status}`)" max-height="150" max-width=""></v-img></td>
                                             <td>{{ order.is_delivery }}</td>
-                                            <td>
-                                                <router-link :to="`/SL_isdelivery/${order.orde_id}`" class="text-decoration-none text-black mr-2">
-                                                <v-btn
-                                                    color="success">
-                                                    จัดส่งสินค้า
-                                                </v-btn>
-                                            </router-link>
+                                            <td v-if="order.is_delivery === '0'">
+                                                <router-link :to="`/SL_isdelivery/${order.orde_id}`"
+                                                    class="text-decoration-none text-black mr-2">
+                                                    <v-btn color="success">
+                                                        จัดส่งสินค้า
+                                                    </v-btn>
+                                                </router-link>
 
                                                 <v-btn @click="deleteOrderInOrder(order.orde_id)" color="red">
                                                     ยกเลิกคำสั่งซื้อ
@@ -167,9 +110,9 @@ export default {
             order: [],
             product: [],
         }
-        
+
     },
-    computed:{
+    computed: {
         recordsCount() {
             return this.order.length;
         },
@@ -178,8 +121,7 @@ export default {
         setAuthheader(localStorage.getItem("token"))
         await this.GetOrderDetail()
         await this.GetProductDetail()
-
-
+        document.title = 'Dashboard'
     },
     methods: {
         async deleteOrderInOrder(orde_id) {
@@ -224,7 +166,7 @@ export default {
         },
         async GetOrderDetail() {
             try {
-                const resp = await axios.get('http://localhost:3001/api/GetCart-forOder')
+                const resp = await axios.get('http://localhost:3001/api/GetOrderfoSL')
                 this.order = resp.data.data
 
             } catch (e) {

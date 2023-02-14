@@ -5,10 +5,12 @@
             </v-row>
             <v-row no-gutters class="justify-center">
 
-                <v-col cols="4">
+                <v-col cols="3">
                     <h2 class="mb-3">เพิ่มข้อมูลที่อยู่</h2>
 
-                    <v-form ref="form">
+                    <v-card>
+                        <v-card-item>
+                            <v-form ref="form">
                         <v-text-field v-model="address.province" label="จังหวัด" required></v-text-field>
                         <v-text-field v-model="address.district" label="อำเภอ" required></v-text-field>
                         <v-text-field v-model="address.sub_district" label="ตำบล" required></v-text-field>
@@ -22,6 +24,10 @@
                         </v-btn>
 
                     </v-form>
+                        </v-card-item>
+                    </v-card>
+
+                   
 
 
 

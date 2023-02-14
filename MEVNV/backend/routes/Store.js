@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const authJwt = require('../middleware/authJwt')
 const db = require('../lib/db.js')
+const multer = require('multer')
 
 // search StoreUsername
 router.get('/store/search/username', [authJwt.verifyToken], (req, res) => {
@@ -68,24 +69,61 @@ router.get('/store/:store_id', (req, res) => {
 })
 
 // getStore All
-router.get('/store/all',[authJwt.verifyToken], (req, res) => {
-  db.query(`SELECT * FROM store;`, (err, data) => {
-    if (err) {
-      return res.status(401).send({
-        message: err.message
-      })
-    } else {
-      return res.status(200).send({
-        data
-      })
+router.get('/storeinfo/byhome', (req, res) => {
+  db.query(
+    `select * from store`,
+    (err, data) => {
+      if (err) {
+        return res.status(401).send({
+          message: err.message
+        })
+      } else {
+        return res.status(200).json({
+          data: data,
+          total: data.length
+        })
+      }
     }
-  })
+  )
 })
 
+// getStore All
+router.get('/storeqr/:store_id', authJwt.verifyToken, (req, res) => {
+  const store_id = req.user.store_id
+  db.query(
+    `select * from store where store_id = ${store_id}`,
+    (err, data) => {
+      if (err) {
+        return res.status(401).send({
+          message: err.message
+        })
+      } else {
+        return res.status(200).json({
+          data: data,
+          total: data.length
+        })
+      }
+    }
+  )
+})
+
+//upload product image old nop
+const imageUploadPath = "../src/assets";
+var profile_path = "";
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, imageUploadPath);
+  },
+  filename: function (req, file, cb) {
+    cb(null, `${file.originalname}`);
+    profile_path = `${file.originalname}`;
+  },
+});
+const imageUpload = multer({ storage: storage });
+
 // Create Store Need Token
-router.post('/store', [authJwt.verifyToken], (req, res) => {
+router.post('/store', imageUpload.single('file'), [authJwt.verifyToken], (req, res) => {
   const user_id = req.user.user_id
-  const role_id = req.user.role_id
   const store_username = req.body.store_username
   const store_name = req.body.store_name
   db.query(
@@ -95,9 +133,9 @@ router.post('/store', [authJwt.verifyToken], (req, res) => {
         console.log(err)
         return res.status(401).send({
           message: err
-        
+
         })
-      
+
       } else {
         if (data.length > 0) {
           return res.status(403).send({
@@ -105,7 +143,7 @@ router.post('/store', [authJwt.verifyToken], (req, res) => {
           })
         } else {
           db.query(
-            `insert into store (store_username, store_name) values ('${store_username}', '${store_name}');`,
+            `insert into store (store_username, store_name, QrCode) values ('${store_username}', '${store_name}', '${profile_path}');`,
             (err, result) => {
               if (err) {
                 console.log(err)
@@ -115,7 +153,7 @@ router.post('/store', [authJwt.verifyToken], (req, res) => {
               } else {
                 const store_id = result.insertId
                 db.query(
-                  `insert into user_role (role_id, user_id, store_id) values ( ${role_id}, ${user_id}, ${store_id});`,
+                  `delete from user_role where user_id = ${user_id}`,
                   (err, result1) => {
                     if (err) {
                       console.log(err)
@@ -123,9 +161,21 @@ router.post('/store', [authJwt.verifyToken], (req, res) => {
                         message: err
                       })
                     } else {
-                      return res.status(201).send({
-                        message: 'Sign up successfully'
-                      })
+                      db.query(
+                        `insert into user_role (role_id, user_id, store_id) values ( '2', ${user_id}, ${store_id});`,
+                        (err) => {
+                          if (err) {
+                            return res.status(401).send({
+                              message: err.message,
+                              err
+                            })
+                          } else {
+                            return res.status(201).send({
+                              message: 'สร้างร้านค้าสำเร็จ',
+                            })
+                          }
+                        }
+                      )
                     }
                   }
                 )

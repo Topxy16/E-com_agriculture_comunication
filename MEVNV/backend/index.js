@@ -35,7 +35,7 @@ const auth = require("./routes/Auth.js");
 const role = require("./routes/Role");
 const user_add = require("./routes/UserAdd");
 const user_role = require("./routes/UserRole");
-const otp = require("./routes/Otp")
+
 const user = require("./routes/User");
 const store = require("./routes/Store");
 const product = require("./routes/Product")
@@ -44,12 +44,11 @@ const upload = require("./routes/Upload")
 const order = require("./routes/Order")
 
 app.use("/api/auth", auth);
-app.use("/api", [role, user_add, otp, user_role, user, store, product, product_ty, upload, order]);
+app.use("/api", [role, user_add, user_role, user, store, product, product_ty, upload, order]);
 
 const image = require("./routes/Image")
-const userfollow = require("./routes/UserFollow")
 app.use("/api/auth", auth);
-app.use("/api", [role, user_add, otp, user_role, user, store, product, product_ty, upload, image, userfollow]);
+app.use("/api", [role, user_add, user_role, user, store, product, product_ty, upload, image]);
 
 
 app.listen(port, () => {

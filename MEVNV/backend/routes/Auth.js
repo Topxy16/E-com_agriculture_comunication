@@ -23,11 +23,11 @@ router.get('/users',(req,res)=>{
 
 router.post('/sign-up', userMiddleware.validateRegister, (req, res, next) => {
   db.query(
-    `SELECT * FROM user WHERE tel = LOWER(${db.escape(req.body.tel)});`,
+    `SELECT * FROM user WHERE username = LOWER(${db.escape(req.body.username)});`,
     (err, result) => {
       if (result.length) {
         return res.status(403).send({
-          message: 'Telephone Number is Activation'
+          message: 'มีผู้ใช้งานนี้แล้ว'
         })
       } else {
         // username is available
@@ -116,27 +116,28 @@ router.post('/login', userMiddleware.validateRegister, (req, res, next) => {
   )
 })
 
-router.delete('/logout', async (req, res) => {
-  try {
-    const { refreshToken } = req.user
-    if(!refreshToken) throw createErroe.BadRequest()
-    const user_id = await verifyRefreshToken(refreshToken)
-    client.DEL(user_id, (err, val) => {
-      if (err){
-        console.log(err.massage)
-        throw createError.InternalServerError()
-      }
-      console.log(val)
-      res.sendStatus(204)
-    })
-  } catch (error) {
-    next(error)
-  }
-})
+// router.delete('/logout',authJwt.verifyToken, async (req, res) => {
+//   try {
+//     const { refreshToken } = req.user.user_id
+//     if(!refreshToken) throw createError.BadRequest()
+//     const user_id = await verifyRefreshToken(refreshToken)
+//     client.DEL(user_id, (err, val) => {
+//       if (err){
+//         console.log(err.massage)
+//         throw createError.InternalServerError()
+//       }
+//       console.log(val)
+//       res.sendStatus(204)
+//     })
+//   } catch (error) {
+//     console.log(error)
+//   }
+// })
 
-router.post('/logout',(req, res) => {
-  token = undefined
-  res.send("logout")
+router.post('/logout',authJwt.verifyToken,(req, res) => {
+  var token = req.user.token
+  token = undefined;
+  res.send("Logout")
 })
 
 router.get('/getuser', authJwt.verifyToken, (req, res, next) => {

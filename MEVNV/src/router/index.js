@@ -30,10 +30,6 @@ const routes = [
     component: () => import('@/layouts/default/Default.vue'),
     children: [
       {
-        path: '',
-        name: 'Home',
-      },
-      {
         path: '/SL_viewproduct',
         name: 'SL_viewproduct',
         component: SL_viewproduct
@@ -74,14 +70,14 @@ const routes = [
         component: ai
       },
       {
-        path: '/SL_storeupdate',
+        path: '/SL_storeupdate/:id',
         name: 'SL_storeupdate',
         component: SL_storeupdate
       },
       {
-        path: '/BY_Home',
-        name: 'BY_Home',
-        component: BY_Home
+        path: '/',
+        name: 'Home',
+        component: BY_Home,
       },
       {
         path: '/BY_buy/:id',

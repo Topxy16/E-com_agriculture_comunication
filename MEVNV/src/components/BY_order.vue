@@ -5,7 +5,7 @@
             </v-row>
             <v-row no-gutters class="justify-center">
 
-                <v-col cols="8">
+                <v-col cols="12">
                     <h2 class="mb-3">คำสั่งซื้อ</h2>
                     <v-hover v-slot="{ isHovering, props }" open-delay="200">
                         <v-card :elevation="isHovering ? 16 : 2" :class="{ 'on-hover': isHovering }" class="mx-auto"
@@ -36,14 +36,17 @@
                                                 สถานะการชำระเงิน
                                             </th>
                                             <th class="text-left">
-                                                เครื่องมือ
+                                                สถานะการจัดส่ง
+                                            </th>
+                                            <th class="text-left">
+                                                แอคชั่น
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr v-for="order in order" :key="order.user_id">
                                             <td>{{ order.orde_id }}</td>
-                                            <td>รูปสินค้า</td>
+                                            <td><v-img  height="150" width="100" :src="(`/src/assets/${order.image}`)"></v-img></td>
                                             <td>
                                                 <div v-for="item in product" :key="item.product_id">
                                                     {{ item.product_id === order.product_id ? item.product_name : '' }}
@@ -63,8 +66,9 @@
                                                     }}
                                                 </div>
                                             </td>
-                                            <td>{{ order.payment_status }}</td>
-                                            <td>
+                                            <td>{{ order.payment_status === "0" ? 'ยังไม่ทำการชำระเงิน' : 'ชำระแล้ว' }}</td>
+                                            <td>{{ order.is_delivery === 0 ? 'ยังไม่ทำการจัดส่ง' : 'จัดส่งแล้ว'}}</td>
+                                            <td v-if="order.payment_status === '0'">
                                                 <router-link :to="`/BY_Payment/${order.orde_id}`"
                                                     class="text-decoration-none text-black">
                                                     <v-btn color="success" class="mr-2">
@@ -102,6 +106,7 @@ export default {
         setAuthheader(localStorage.getItem("token"))
         await this.GetOrderDetail()
         await this.GetProductDetail()
+        document.title = 'Order'
 
 
     },

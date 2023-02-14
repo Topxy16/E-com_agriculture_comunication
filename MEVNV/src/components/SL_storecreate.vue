@@ -1,26 +1,33 @@
 <template>
-        <v-img src="@/assets/9.png" class="responsive">
-            <v-container fluid>
-                <v-row class="mt-5 justify-center">
-                    <v-col cols="3" class="mt-5">
+    <v-img src="@/assets/9.png" class="responsive">
+        <v-container fluid>
+            <v-row class="mt-5 justify-center">
+                <v-col cols="3" class="mt-5">
                     <h1 class="mb-5">สร้างร้านค้าของคุณ</h1>
+                    <v-card>
+                        <v-card-item>
+                            <v-form ref="form">
 
-                    <v-form ref="form">
+                                <v-text-field v-model="store.store_username" label="ชื่อผู้ใช้งานร้านค้า"
+                                    required></v-text-field>
+                                <v-text-field v-model="store.store_name" label="ชื่อร้านค้า" required></v-text-field>
+                                <v-file-input v-model="file" type="file" @change="showfile()" placeholder="Pick an image"
+                            prepend-icon="mdi-camera" label="img" required>
+                        </v-file-input>
 
-                        <v-text-field v-model="store.store_username" label="ชื่อผู้ใช้งานร้านค้า" required></v-text-field>
-                        <v-text-field v-model="store.store_name" label="ชื่อร้านค้า" required></v-text-field>
-                        <!-- <v-file-input v-model="img" label="img" required></v-file-input> -->
+                                <v-btn color="success" class="mr-4 w-100" @click="handleSubmitForm">
+                                    สร้าง
+                                </v-btn>
 
-                        <v-btn color="success" class="mr-4 w-100" @click="handleSubmitForm">
-                            สร้าง
-                        </v-btn>
+                            </v-form>
+                        </v-card-item>
+                    </v-card>
 
-                    </v-form>
 
                 </v-col>
-                </v-row>
-            </v-container>
-        </v-img>
+            </v-row>
+        </v-container>
+    </v-img>
 </template>
 
 <style>
@@ -34,32 +41,38 @@ export default {
     data() {
         return {
             store: {
-                store_username:'',
-                store_name:'',
+                store_username: '',
+                store_name: '',
             },
+            file: "",
         }
     },
-    created(){
+    created() {
         setAuthheader(localStorage.getItem("token"))
     },
     methods: {
         async handleSubmitForm() {
-
-
-            await axios.post('http://localhost:3001/api/store',{
-                store_username:  this.store.store_username,
-                store_name:  this.store.store_username,
-            }).then((res) => {
-                console.log(res.data.message)
-                this.showAlert = true;               
-                this.$router.push('/sl_dashboard');
-
-            }).catch(error => {
-                console.log(error)
-                this.showAlert = true;
-                this.alertMessage = error.response.data.message;
-            })
-        }
+            try {
+                const formData = new FormData()
+                formData.append('file', this.file[0])
+                formData.append('store_username', this.store.store_username)
+                formData.append('store_name', this.store.store_name)
+                await axios.post(`http://localhost:3001/api/store`, formData)
+                this.$router.push('/login');
+            } catch (e) {
+                // if (e.response.status === 403) {
+                //     alert("Token Exception")
+                //     this.$router.push('/login');
+                // } else if (e.response.status === 401) {
+                //     alert("Go to Login")
+                //     this.$router.push('/login');
+                // }
+                console.log(e)
+            }
+        },
+        async showfile() {
+            console.log(this.file[0])
+        },
     },
 }
 </script>

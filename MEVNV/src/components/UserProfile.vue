@@ -40,7 +40,6 @@
                                                 ตำบล : {{ item.sub_district }} รหัสไปรษณีย์ : {{ item.zip_code }} </h3>
                                             <h3> เบอร์โทร : {{ item.tel }} </h3>
                                         </div>
-
                                     </v-card>
                                 </div>
                             </div>
@@ -101,7 +100,7 @@ export default {
         await this.GetInforUserbyID()
         console.log(this.address)
         console.log(this.userinfo)
-
+        document.title = 'Profile'
 
     },
     methods: {

@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const authJwt = require('../middleware/authJwt')
 const db = require('../lib/db.js')
+const multer = require('multer')
 
 // search product
 router.get('/product/search', (req, res) => {
@@ -104,7 +105,7 @@ router.get('/product/store/:id', (req, res) => {
 router.get('/product-get-product-id/:id', (req, res) => {
   const id = req.params.id
   db.query(
-    `select product.*, db_image.image from product LEFT JOIN db_image ON db_image.product_id = product.product_id where product.product_id = ${id};`,
+    `select * from product where product.product_id = ${id};`,
     (err, data) => {
       if (err) {
         return res.status(401).send({
@@ -157,27 +158,41 @@ router.get('/product-by-storeID', [authJwt.verifyToken], (req, res) => {
 })
 
 
+//upload product image old nop
+const imageUploadPath = "../src/assets";
+var profile_path = "";
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, imageUploadPath);
+  },
+  filename: function (req, file, cb) {
+    cb(null, `${file.originalname}`);
+    profile_path = `${file.originalname}`;
+  },
+});
+const imageUpload = multer({ storage: storage });
+
 
 // create Product
-router.post('/product', [authJwt.verifyToken, authJwt.isStore], (req, res) => {
+router.post('/product', imageUpload.single("file"),[authJwt.verifyToken, authJwt.isStore], (req, res) => {
   const user_id = req.user.user_id
   const product_type_id = req.body.product_type_id
   const product_name = req.body.product_name
   const product_price = req.body.product_price
   const product_number = req.body.product_number
   const description = req.body.description
-  let store_id = 0
+  const store_id = req.user.store_id
   db.query(
-    `select * from user_role where user_id = ${user_id} and role_id = 3;`,
+    `select * from user_role where user_id = ${user_id} and role_id = 2;`,
     (err, data) => {
       if (err) {
         return res.status(401).send({
           message: err.message
         })
       } else {
-        store_id = data[0].store_id
         db.query(
-          `insert into product (py_id, product_name, product_price, store_id, product_number, description, post_date) values (${product_type_id},'${product_name}', '${product_price}', ${store_id}, '${product_number}', '${description}', now());`,
+          `insert into product (py_id, product_name, product_price, store_id, product_number, description, image, post_date) values 
+          (${product_type_id},'${product_name}', '${product_price}', ${store_id}, '${product_number}', '${description}', '${profile_path}', now());`,
           (err, result) => {
             if (err) {
               return res.status(401).send({

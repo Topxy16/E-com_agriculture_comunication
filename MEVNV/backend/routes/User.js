@@ -44,6 +44,76 @@ router.get('/user/all', [authJwt.verifyToken, authJwt.isAdmin], (req, res) => {
     }
   })
 })
+
+router.get('/user-role', [authJwt.verifyToken, authJwt.isAdmin], (req, res) => {
+  db.query(`SELECT * FROM user_role;`, (err, data) => {
+    if (err) {
+      return res.status(400).send({
+        code: err.code,
+        message: err.message
+      })
+    } else {
+      if (data.length === 0) {
+        return res.status(404).send({
+          message: 'user_id not found'
+        })
+      }
+      return res.status(200).send({
+        data,
+        total: data.length
+      })
+    }
+  })
+})
+//get role for menu
+router.get('/user-role-menu/:user_id', [authJwt.verifyToken], (req, res) => {
+  const user_id = req.user.user_id
+  db.query(`SELECT user_role.user_id, user_role.role_id, user_role.store_id FROM user_role WHERE user_role.user_id = '${user_id}';`,
+    (err, data) => {
+      if (err) {
+        return res.status(400).send({
+          code: err.code,
+          message: err.message
+        })
+      } else {
+        if (data.length === 0) {
+          return res.status(404).send({
+            message: 'user_id not found'
+          })
+        }
+        return res.status(200).send({
+          data,
+          total: data.length
+        })
+      }
+    })
+})
+//get address for menu
+router.get('/user-address-menu/:user_id', [authJwt.verifyToken], (req, res) => {
+  const user_id = req.user.user_id
+  db.query(`SELECT user_address.*, user_address.user_id
+  FROM user_address
+  WHERE user_address.user_id = '${user_id}';`,
+    (err, data) => {
+      if (err) {
+        return res.status(400).send({
+          code: err.code,
+          message: err.message
+        })
+      } else {
+        if (data.length === 0) {
+          return res.status(404).send({
+            message: 'user_id not found'
+          })
+        }
+        return res.status(200).send({
+          data,
+          total: data.length
+        })
+      }
+    })
+})
+
 //admin
 router.get(
   '/user/:user_id',
@@ -75,24 +145,24 @@ router.get(
   [authJwt.verifyToken],
   (req, res) => {
     const user_id = req.user.user_id
-    db.query(`select * from user where user_id = ${user_id};`, 
-    (err, data) => {
-      if (err) {
-        return res.status(400).send({
-          code: err.code,
-          message: err.message
-        })
-      } else {
-        if (data.length === 0) {
-          return res.status(404).send({
-            message: 'user_id not found'
+    db.query(`select * from user where user_id = ${user_id};`,
+      (err, data) => {
+        if (err) {
+          return res.status(400).send({
+            code: err.code,
+            message: err.message
+          })
+        } else {
+          if (data.length === 0) {
+            return res.status(404).send({
+              message: 'user_id not found'
+            })
+          }
+          return res.status(200).send({
+            data
           })
         }
-        return res.status(200).send({
-          data
-        })
-      }
-    })
+      })
   }
 )
 //user update userinfo
