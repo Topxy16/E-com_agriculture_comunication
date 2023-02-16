@@ -6,7 +6,7 @@
             <v-row no-gutters class="justify-center">
 
                 <v-col cols="3">
-                    <h2 class="mb-3">เพิ่มข้อมูลที่อยู่</h2>
+                    <h2 class="mb-3">แก้ไขข้อมูลส่วนตัว</h2>
 
                     <v-card>
                         <v-card-item>

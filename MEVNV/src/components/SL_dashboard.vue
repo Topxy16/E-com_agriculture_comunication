@@ -74,7 +74,7 @@
                                                 </div>
                                             </td>
                                             <td><v-img :src="(`/src/assets/${order.payment_status}`)" max-height="150" max-width=""></v-img></td>
-                                            <td>{{ order.is_delivery }}</td>
+                                            <td>{{ order.is_delivery === '0' ? 'ยังไม่ทำการจัดส่ง' : order.is_delivery}}</td>
                                             <td v-if="order.is_delivery === '0'">
                                                 <router-link :to="`/SL_isdelivery/${order.orde_id}`"
                                                     class="text-decoration-none text-black mr-2">

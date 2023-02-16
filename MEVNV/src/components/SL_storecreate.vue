@@ -12,7 +12,7 @@
                                     required></v-text-field>
                                 <v-text-field v-model="store.store_name" label="ชื่อร้านค้า" required></v-text-field>
                                 <v-file-input v-model="file" type="file" @change="showfile()" placeholder="Pick an image"
-                            prepend-icon="mdi-camera" label="img" required>
+                            prepend-icon="mdi-camera" label="ช่องทางการชำระเงิน(QRCODE)" required>
                         </v-file-input>
 
                                 <v-btn color="success" class="mr-4 w-100" @click="handleSubmitForm">

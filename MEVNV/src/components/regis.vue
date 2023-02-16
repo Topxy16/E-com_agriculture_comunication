@@ -76,9 +76,9 @@ export default {
                 this.$router.push('/login');
 
             }).catch(error => {
-                console.log(error)
+                console.log(error.response.data)
                 this.showAlert = true;
-                this.alertMessage = error.response.data.message;
+                this.alertMessage = error.response.data.msg || error.response.data.message
             })
         }
     }

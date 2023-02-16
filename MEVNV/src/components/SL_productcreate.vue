@@ -6,7 +6,7 @@
                     <h1 class="mb-5">เพิ่มข้อมูลสินค้า</h1>
                     <v-card>
                         <v-card-item>
-                            <v-form ref="entryForm" @submit.prevent="handleSubmitForm">
+                            <form @submit.prevent="handleSubmitForm">
                         <v-text-field v-model="product.product_name" label="ชื่อสินค้า" required></v-text-field>
                         <v-text-field v-model="product.description" label="รายละเอียด" required></v-text-field>
 
@@ -30,7 +30,7 @@
                         <v-btn color="success" class="mr-4 w-100" @click="handleSubmitForm">
                             ยืนยัน
                         </v-btn>
-                    </v-form>
+                    </form>
                         </v-card-item>
 
                     </v-card>

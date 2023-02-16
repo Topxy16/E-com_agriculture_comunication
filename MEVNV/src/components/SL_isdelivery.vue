@@ -213,7 +213,8 @@ export default {
                     await axios.patch(`http://localhost:3001/api/delivery/${this.$route.params.id}`, {
                     is_delivery: this.Delivery.is_delivery,
 
-                })                
+                })      
+                this.$router.push('/sl_dashboard');          
             } catch (e) {
                 // if (e.response.status === 403) {
                 //     alert("Token Exception")

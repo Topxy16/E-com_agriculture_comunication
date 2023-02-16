@@ -2,7 +2,7 @@ module.exports = {
     validateRegister: (req, res, next) => {
         if (!req.body.username || !req.body.password) {
             return res.status(400).send({
-                msg: "enter ussername and password",
+                msg: "สมัครสมาชิกไม่สำเร็จ",
             });
         }
         next();

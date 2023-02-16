@@ -47,6 +47,8 @@ export default {
         username: "",
         password: "",
       },
+      showAlert: false,
+      alertMessage: "",
     }
   },
 
@@ -62,15 +64,20 @@ export default {
           setAuthheader(data.data.token)
           if (data.data.user.role_name == "Admin") {
             this.$router.push('/Admin_dashboard');
+     
           } else if (data.data.user.role_name == "store") {
             this.$router.push('/sl_dashboard');
+            
           } else {
             this.$router.push('/');
+        
           }
 
         })
         .catch((error) => {
           console.log(error);
+          this.showAlert = true;
+                this.alertMessage = error.response.data.msg || error.response.data.message
         });
     },
   }

@@ -82,7 +82,7 @@ router.post('/login', userMiddleware.validateRegister, (req, res, next) => {
       } else {
         if (result.length === 0) {
           return res.status(404).send({
-            msg: 'username or password not found'
+            msg: 'ชื่อผู้ใช้งาน หรือ รหัสผ่านไม่ตรง'
           })
         } else {
           const userData = {

@@ -38,7 +38,7 @@
                                             <h3> รายละเอียดที่อยู่ : {{ item.address }} </h3>
                                             <h3> จังหวัด : {{ item.province }} อำเภอ : {{ item.district }}
                                                 ตำบล : {{ item.sub_district }} รหัสไปรษณีย์ : {{ item.zip_code }} </h3>
-                                            <h3> เบอร์โทร : {{ item.tel }} </h3>
+                                            <h3> เบอร์โทร : 0{{ item.tel }} </h3>
                                         </div>
                                     </v-card>
                                 </div>

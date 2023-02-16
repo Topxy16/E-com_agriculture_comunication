@@ -1,84 +1,89 @@
 <template>
     <v-img src="@/assets/9.png" class="responsive">
-        <v-container class="mt-5">
-            <v-row class="mb-6" no-gutters>
-            </v-row>
-            <v-row no-gutters class="justify-center">
-
+        <v-container>
+            <v-row class="mb-3 mt-5">
                 <v-col cols="12">
-                    <h2 class="mb-3">รถเข็น</h2>
+                    <v-card>
+                        <v-card-item>
+                            <h3>จำนวนออร์เดอร์ที่ซื้อขายสำเร็จ : {{ recordsCount }}</h3>
+                        </v-card-item>
+                    </v-card>
+                </v-col>
+            </v-row>
+            <v-row no-gutters>
+                <v-col cols="12">
                     <v-hover v-slot="{ isHovering, props }" open-delay="200">
-                        <v-card :elevation="isHovering ? 16 : 2" :class="{ 'on-hover': isHovering }" class="mx-auto"
-                            max-width="" v-bind="props">
+                        <v-card :elevation="isHovering ? 16 : 2" :class="{ 'on-hover': isHovering }" width=""
+                            class="mx-auto" v-bind="props">
                             <v-card-text>
                                 <v-table>
                                     <thead>
                                         <tr>
                                             <th class="text-left">
-                                                สินค้า
+                                                เลขออเดอร์
                                             </th>
                                             <th class="text-left">
-
+                                                รูปสินค้า
                                             </th>
                                             <th class="text-left">
-                                                ราคาต่อชิ้น
+                                                ชื่อ
                                             </th>
                                             <th class="text-left">
                                                 จำนวน
                                             </th>
                                             <th class="text-left">
+                                                ราคาต่อชิ้น
+                                            </th>
+                                            <th class="text-left">
                                                 ราคารวม
                                             </th>
                                             <th class="text-left">
-                                                แอคชั่น
+                                                สถานะการชำระเงิน
                                             </th>
+                                            <th class="text-left">
+                                                สถานะการการจัดส่ง
+                                            </th>
+                                     
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="cart in cart" :key="cart.user_id">
-                                            <td>                                       
-                                                    <v-img  height="150" width="100" :src="(`/src/assets/${cart.image}`)"></v-img>                                           
+                                        <tr v-for="order in order" :key="order.user_id">
+                                            <td>{{ order.orde_id }}</td>
+                                            <td>                                  
+                                                <v-img height="150" :src="(`/src/assets/${order.image}`)"></v-img>                                     
                                             </td>
                                             <td>
-                                                <div v-for="item in product" :key="item.product_id">{{
-                                                    item.product_id
-                                                        === cart.product_id ? item.product_name : ""
-                                                }}</div>
+                                                <div v-for="item in product" :key="item.product_id">
+                                                    {{ item.product_id === order.product_id ? item.product_name : '' }}
+                                                </div>
                                             </td>
-
+                                            <td>{{ order.product_number }}</td>
                                             <td>
-                                                <div v-for="item in product" :key="item.product_id">{{
-                                                    item.product_id
-                                                        === cart.product_id ? item.product_price : ""
-                                                }}</div>
-                                            </td>
-                                            <td>
-                                                <div style="width:125px;"><v-text-field class="mt-5" variant="solo"
-                                                        type="number" v-model="cart.product_number"></v-text-field>
+                                                <div v-for="item in product" :key="item.product_id">
+                                                    {{ item.product_id === order.product_id ? item.product_price : '' }}
                                                 </div>
                                             </td>
                                             <td>
                                                 <div v-for="item in product" :key="item.product_id">
                                                     {{
-                                                        item.product_id === cart.product_id ? item.product_price *
-                                                            cart.product_number : ''
+                                                        item.product_id === order.product_id ?
+                                                            item.product_price * order.product_number : ''
                                                     }}
                                                 </div>
                                             </td>
+                                            <td><v-img :src="(`/src/assets/${order.payment_status}`)" max-height="150" max-width=""></v-img></td>
+                                            <td>{{ order.is_delivery === '0' ? 'ยังไม่ทำการจัดส่ง' : order.is_delivery}}</td>
+                                            <td v-if="order.is_delivery === '0'">
+                                                <router-link :to="`/SL_isdelivery/${order.orde_id}`"
+                                                    class="text-decoration-none text-black mr-2">
+                                                    <v-btn color="success">
+                                                        จัดส่งสินค้า
+                                                    </v-btn>
+                                                </router-link>
 
-                                            <td>
-
-                                                <v-btn
-                                                    @click="AddProductToOrder(cart.product_id, cart.product_number, cart.cart_shop_id, cart.store_id, cart.image)"
-                                                    color="success" class="mr-2">
-                                                    สั่งซื้อ
+                                                <v-btn @click="deleteOrderInOrder(order.orde_id)" color="red">
+                                                    ยกเลิกคำสั่งซื้อ
                                                 </v-btn>
-
-                                                <v-btn @click="deleteOrderInCart(cart.cart_shop_id)" color="red">
-                                                    ลบ
-                                                </v-btn>
-
-
                                             </td>
                                         </tr>
                                     </tbody>
@@ -100,33 +105,30 @@ import setAuthheader from "../utils/setAuthheader";
 export default {
     data() {
         return {
-            cart: [],
+            order: [],
             product: [],
-            totalprice: '',
         }
+
     },
     computed: {
-        totalPrice() {
-
-        }
+        recordsCount() {
+            return this.order.length;
+        },
     },
     async created() {
         setAuthheader(localStorage.getItem("token"))
         await this.GetOrderDetail()
         await this.GetProductDetail()
-        document.title = 'Cart'
-
-
-
+        document.title = 'Static'
     },
     methods: {
-        async deleteOrderInCart(cart_shop_id) {
-            console.log(cart_shop_id)
+        async deleteOrderInOrder(orde_id) {
+            console.log(orde_id)
             try {
-                const resp = await axios.delete(`http://localhost:3001/api/cart/${cart_shop_id}`, {
-                    cart_shop_id: this.cart.cart_shop_id
+                const resp = await axios.delete(`http://localhost:3001/api/order/${orde_id}`, {
+                    orde_id: this.order.orde_id
                 })
-                this.cart_shop_id = resp.data.data
+                this.order = resp.data.data
                 this.$router.go()
 
 
@@ -141,18 +143,14 @@ export default {
                 console.log(e)
             }
         },
-        async AddProductToOrder(product_id, product_number, cart_shop_id, store_id, image) {
+        async AddProductToOrder(product_id, product_name) {
             try {
-                const resp = await axios.post(`http://localhost:3001/api/create-Order-to-Order/${product_id},${product_number},${cart_shop_id},${store_id},${image}`, {
-                    product_id: this.cart.product_id,
-                    product_number: this.cart.product_number,
-                    cart_shop_id: this.cart.cart_shop_id,
-                    store_id: this.cart.store_id,
-                    image: this.cart.image
+                const resp = await axios.post(`http://localhost:3001/api/create-order-to-cart/${product_id},${product_name}`, {
+                    product_id: this.product.product_id,
+                    product_number: this.product.product_number
                 })
+                this.order = resp.data.data[0]
 
-                this.cart = resp.data.data
-                this.$router.go();
             } catch (e) {
                 // if (e.response.status === 403) {
                 //     alert("Token Exception")
@@ -161,13 +159,13 @@ export default {
                 //     alert("Go to Login")
                 //     this.$router.push('/login');
                 // }
-                // console.log(e)
+                console.log(e)
             }
         },
         async GetOrderDetail() {
             try {
-                const resp = await axios.get('http://localhost:3001/api/GetOder-forCart')
-                this.cart = resp.data.data
+                const resp = await axios.get('http://localhost:3001/api/GetOrderfoStatic')
+                this.order = resp.data.data
 
             } catch (e) {
                 // if (e.response.status === 403) {
@@ -181,7 +179,6 @@ export default {
             }
         },
         async GetProductDetail() {
-
             try {
                 const resp = await axios.get('http://localhost:3001/api/product')
                 this.product = resp.data.data

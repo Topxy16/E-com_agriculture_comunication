@@ -81,7 +81,7 @@ router.get('/GetOrderfoSL', [authJwt.verifyToken], (req, res) => {
     `SELECT orde.user_id, orde.payment_status, orde.is_delivery, orde_detail.orde_id, orde_detail.image, orde_detail.product_id, orde_detail.product_number, orde_detail.store_id
     FROM orde 
       LEFT JOIN orde_detail ON orde_detail.orde_id = orde.orde_id
-    WHERE orde_detail.store_id = ${store_id};`,
+    WHERE orde_detail.store_id = ${store_id} && orde.is_delivery = '0';`,
     (err, data) => {
       if (err) {
         return res.status(401).send({
@@ -96,6 +96,29 @@ router.get('/GetOrderfoSL', [authJwt.verifyToken], (req, res) => {
     }
   )
 })
+
+router.get('/GetOrderfoStatic', [authJwt.verifyToken], (req, res) => {
+  const store_id = req.user.store_id
+  db.query(
+    `SELECT orde.user_id, orde.payment_status, orde.is_delivery, orde_detail.orde_id, orde_detail.image, orde_detail.product_id, orde_detail.product_number, orde_detail.store_id
+    FROM orde 
+      LEFT JOIN orde_detail ON orde_detail.orde_id = orde.orde_id
+    WHERE orde_detail.store_id = ${store_id} && orde.payment_status != '0' && orde.is_delivery != '0';`,
+    (err, data) => {
+      if (err) {
+        return res.status(401).send({
+          message: err.message
+        })
+      } else {
+        return res.status(200).json({
+          data: data,
+          total: data.length
+        })
+      }
+    }
+  )
+})
+
 // get OrderCart By User ID for Order page
 router.get('/GetCart-forOder', [authJwt.verifyToken], (req, res) => {
   const user_id = req.user.user_id
@@ -187,7 +210,7 @@ router.post('/create-Order-to-cart/:product_id,:store_id,:image', [authJwt.verif
               })
             } else {
               return res.status(201).send({
-                message: 'insert successfully',
+                message: 'เพิ่มสินค้าลงในตระกร้าสำเร็จ',
               })
             }
           }
@@ -208,7 +231,7 @@ router.post('/create-Order-to-Order/:product_id,:product_number,:cart_shop_id,:s
   var order_id = 0
   console.log(cart_shop_id)
   db.query(
-    `INSERT INTO orde (user_id, payment_status) VALUES ('${user_id}', '0');`,
+    `INSERT INTO orde (user_id, payment_status, is_delivery) VALUES ('${user_id}', '0', '0');`,
     (err, result) => {
       if (err) {
         return res.status(401).send({

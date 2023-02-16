@@ -67,7 +67,7 @@
                                                 </div>
                                             </td>
                                             <td>{{ order.payment_status === "0" ? 'ยังไม่ทำการชำระเงิน' : 'ชำระแล้ว' }}</td>
-                                            <td>{{ order.is_delivery === 0 ? 'ยังไม่ทำการจัดส่ง' : 'จัดส่งแล้ว'}}</td>
+                                            <td>{{ order.is_delivery === '0' ? 'ยังไม่ทำการจัดส่ง' : order.is_delivery}}</td>
                                             <td v-if="order.payment_status === '0'">
                                                 <router-link :to="`/BY_Payment/${order.orde_id}`"
                                                     class="text-decoration-none text-black">

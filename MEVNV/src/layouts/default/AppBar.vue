@@ -79,6 +79,7 @@
         
         <v-list-item prepend-icon="mdi-store" title="หน้าร้านค้า" :to="Link.Store"></v-list-item>
         <v-list-item prepend-icon="mdi-clipboard" title="คำสั่งซื้อ" :to="Link.DashboardSeller"></v-list-item>
+        <v-list-item prepend-icon="mdi-clipboard-search" title="สถิติการขาย" :to="Link.Static"></v-list-item>
       <v-list-group value="Product">
         <template v-slot:activator="{ props }">
           <v-list-item
@@ -136,6 +137,7 @@ export default {
         AddProduct: '/SL_productcreate',
         ViewProduct: '/SL_viewproduct',
         Store: '/sl_store',
+        Static: '/SL_static',
       },
       open: ['Product'],
     }

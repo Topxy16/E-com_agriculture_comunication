@@ -16,8 +16,9 @@
             </v-col>
         </v-row> -->
 
-
+        <v-alert v-show="showAlert" dense outlined type="success">{{ alertMessage }}</v-alert>
         <v-row class="">
+            
             <v-col cols="2" v-for="product in product" :key="product.product_id" >
                 <v-card :loading="loading" class="mx-auto my-12" max-width="280" v-if="product.product_show === 1">
                     <template v-slot:loader="{ isActive }">
@@ -87,6 +88,8 @@ export default {
             ],
             loaded: false,
             loading: false,
+            showAlert: false,
+            alertMessage: "",
         }
     },
     async created() {
@@ -94,6 +97,7 @@ export default {
         await this.getProduct()
         await this.getStoreinfo()
         document.title = 'Home'
+        
     },
     methods: {
         onClick() {
@@ -111,15 +115,18 @@ export default {
                     store_id: this.product.store_id,
                     image: this.product.image
                 })
-                this.order = resp.data.data[0]
+                this.order = resp.data.data
+                this.showAlert = true;
+                this.alertMessage = resp.data.message
+                
             } catch (e) {
-                // if (e.response.status === 403) {
-                //     alert("Token Exception")
-                //     this.$router.push('/login');
-                // } else if (e.response.status === 401) {
-                //     alert("Go to Login")
-                //     this.$router.push('/login');
-                // }
+                if (e.response.status === 403) {
+                    alert("Token Exception")
+                    this.$router.push('/login');
+                } else if (e.response.status === 401) {
+                    alert("Go to Login")
+                    this.$router.push('/login');
+                }
                 console.log(e)
             }
         },
