@@ -6,10 +6,13 @@ const multer = require('multer')
 
 // search product
 router.get('/product/search', (req, res) => {
-  const name = req.query.name
-  const store_id = req.query.store_id
+  const product_name = req.query.product_name
+  const product_type_name = req.query.product_type_name
   db.query(
-    `select * from product where product_name like '%${name}%' or store_id like '%${store_id}';`,
+    `SELECT product.*, product_type.*, product.product_name
+    FROM product 
+      LEFT JOIN product_type ON product.py_id = product_type.product_type_id
+    WHERE product.product_name LIKE '%${product_name}%' AND product_type.product_type_name LIKE '%${product_type_name}%';`,
     (err, data) => {
       if (err) {
         return res.status(401).send({

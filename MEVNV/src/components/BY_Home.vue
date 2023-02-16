@@ -3,18 +3,18 @@
     <v-container>
 
 
-        <!-- <v-row>
+        <v-row>
             <v-col>
                 <v-card class="mx-auto" color="grey-lighten-3" max-width="">
                     <v-card-text>
-                        <v-text-field :loading="loading" density="compact" variant="solo" label="ค้นหาสินค้า"
+                        <v-text-field :loading="loading" density="compact" variant="solo" label="ค้นหาสินค้า" v-model="Seach.product_name"
                             append-inner-icon="mdi-magnify" single-line hide-details
-                            @click:append-inner="onClick"></v-text-field>
+                            @keydown.enter="SeachProduct(Seach.product_name,Seach.product_type_name)"></v-text-field>
                     </v-card-text>
                 </v-card>
 
             </v-col>
-        </v-row> -->
+        </v-row>
 
         <v-alert v-show="showAlert" dense outlined type="success">{{ alertMessage }}</v-alert>
         <v-row class="">
@@ -41,8 +41,7 @@
 
                     <v-card-text>
                         <v-row align="center" class="mx-0">
-                            <v-rating :model-value="3.5" color="amber" density="compact" half-increments readonly
-                                size="small"></v-rating>
+                            <div v-for="item in producttype" :key="item.product_type_id">{{ item.product_type_id === product.py_id ? item.product_type_name :'' }}</div>
 
                         </v-row>
 
@@ -68,7 +67,7 @@
 
 <style scoped>
 
-</style>
+</style>+
 
 <script>
 import axios from 'axios';
@@ -78,6 +77,7 @@ export default {
         return {
             title: this.$route.name,
             product: [],
+            producttype: [],
             store: [],
             slides: [
                 'First',
@@ -90,14 +90,19 @@ export default {
             loading: false,
             showAlert: false,
             alertMessage: "",
+            Seach: {
+                product_name: "",
+                product_type_name: ""
+
+            }
         }
     },
     async created() {
         setAuthheader(localStorage.getItem("token"))
         await this.getProduct()
         await this.getStoreinfo()
+        await this.getProductType()
         document.title = 'Home'
-        
     },
     methods: {
         onClick() {
@@ -130,10 +135,44 @@ export default {
                 console.log(e)
             }
         },
+        async SeachProduct(product_name,product_type_name) {
+            try {
+                const resp = await axios.get(`http://localhost:3001/api/product/search?product_name=${product_name}&product_type_name=${product_type_name}`, {
+                    product_name: this.Seach.product_name,
+                    product_type_name: this.Seach.product_type_name
+                })  
+                this.product = resp.data.data         
+            } catch (e) {
+                // if (e.response.status === 403) {
+                //     alert("Token Exception")
+                //     this.$router.push('/login');
+                // } else if (e.response.status === 401) {
+                //     alert("Go to Login")
+                //     this.$router.push('/login');
+                // }
+                console.log(e)
+            }
+        },
         async getProduct() {
             try {
                 const resp = await axios.get('http://localhost:3001/api/product',)
                 this.product = resp.data.data
+            } catch (e) {
+                // if (e.response.status === 403) {
+                //     alert("Token Exception")
+                //     this.$router.push('/login');
+                // } else if (e.response.status === 401) {
+                //     alert("Go to Login")
+                //     this.$router.push('/login');
+                // }
+                console.log(e)
+            }
+        },
+        async getProductType() {
+            try {
+                const resp = await axios.get('http://localhost:3001/api/product-type',)
+                this.producttype = resp.data
+                console.log(this.producttype.product_type_name)
             } catch (e) {
                 // if (e.response.status === 403) {
                 //     alert("Token Exception")
