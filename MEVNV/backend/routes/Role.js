@@ -41,6 +41,42 @@ router.get('/role/all', [authJwt.verifyToken, authJwt.isAdmin], (req, res) => {
   })
 })
 
+router.get('/role/sell', [authJwt.verifyToken, authJwt.isAdmin], (req, res) => {
+  db.query(`SELECT user_role.*, user_role.role_id
+  FROM user_role
+  WHERE user_role.role_id = '2';`,
+    (err, data) => {
+      if (err) {
+        return res.status(401).send({
+          message: err
+        })
+      } else {
+        return res.status(200).send({
+          data,
+          totle: data.length
+        })
+      }
+    })
+})
+
+router.get('/role/buy', [authJwt.verifyToken, authJwt.isAdmin], (req, res) => {
+  db.query(`SELECT user_role.*, user_role.role_id
+  FROM user_role
+  WHERE user_role.role_id = '1';`,
+    (err, data) => {
+      if (err) {
+        return res.status(401).send({
+          message: err
+        })
+      } else {
+        return res.status(200).send({
+          data,
+          totle: data.length
+        })
+      }
+    })
+})
+
 //get role by user_id
 router.get('/role/get-role-name', [authJwt.verifyToken, authJwt.isAdmin], (req, res) => {
   const user_id = req.body.user_id
@@ -48,19 +84,19 @@ router.get('/role/get-role-name', [authJwt.verifyToken, authJwt.isAdmin], (req, 
   db.query(`SELECT user_role.*, user_role.role_id, user.*, role.role_name 
   FROM user_role 
     LEFT JOIN user ON user_role.user_id = user.user_id 
-    LEFT JOIN role ON user_role.role_id = role.role_id ORDER BY user_role.user_id ASC;`, 
-  (err, data) => {
-    if (err) {
-      return res.status(401).send({
-        message: err
-      })
-    } else {
-      return res.status(200).send({
-        data,
-        totle: data.length
-      })
-    }
-  })
+    LEFT JOIN role ON user_role.role_id = role.role_id ORDER BY user_role.user_id ASC;`,
+    (err, data) => {
+      if (err) {
+        return res.status(401).send({
+          message: err
+        })
+      } else {
+        return res.status(200).send({
+          data,
+          totle: data.length
+        })
+      }
+    })
 })
 
 router.post('/role', [authJwt.verifyToken, authJwt.isAdmin], (req, res) => {

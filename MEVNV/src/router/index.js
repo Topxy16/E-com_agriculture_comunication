@@ -24,6 +24,7 @@ import BY_Payment from "@/components/BY_Payment.vue";
 import SL_isdelivery from "@/components/SL_isdelivery.vue";
 import SL_uploadfile from "@/components/SL_uploadfile.vue";
 import SL_static from "@/components/SL_static.vue";
+import Admin_user from "@/components/Admin_user.vue";
 
 const routes = [
   {
@@ -154,6 +155,11 @@ const routes = [
         path: '/SL_static',
         name: 'SL_static',
         component: SL_static
+      },
+      {
+        path: '/Admin_user',
+        name: 'Admin_user',
+        component: Admin_user
       },
     ],
   },

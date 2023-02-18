@@ -75,6 +75,51 @@ router.get('/GetOder-forCart', [authJwt.verifyToken], (req, res) => {
 })
 
 
+router.get('/Order/sumprice', [authJwt.verifyToken], (req, res) => {
+  db.query(
+    `SELECT orde.*, orde_detail.*, product.product_id, product.product_price
+    FROM orde 
+      LEFT JOIN orde_detail ON orde_detail.orde_id = orde.orde_id
+        LEFT JOIN product ON product.product_id = orde_detail.product_id;`,
+    (err, data) => {
+      if (err) {
+        return res.status(401).send({
+          message: err.message
+        })
+      } else {
+        return res.status(200).json({
+          data: data,
+          total: data.length
+        })
+      }
+    }
+  )
+})
+
+router.get('/OrderStoreID/sumprice', [authJwt.verifyToken], (req, res) => {
+  const store_id = req.user.store_id
+  db.query(
+    `SELECT orde.*, orde_detail.*, product.product_id, product.product_price
+    FROM orde 
+      LEFT JOIN orde_detail ON orde_detail.orde_id = orde.orde_id
+        LEFT JOIN product ON product.product_id = orde_detail.product_id
+        WHERE orde_detail.store_id = ${store_id};`,
+    (err, data) => {
+      if (err) {
+        return res.status(401).send({
+          message: err.message
+        })
+      } else {
+        return res.status(200).json({
+          data: data,
+          total: data.length
+        })
+      }
+    }
+  )
+})
+
+
 router.get('/GetOrderfoSL', [authJwt.verifyToken], (req, res) => {
   const store_id = req.user.store_id
   db.query(
@@ -104,6 +149,29 @@ router.get('/GetOrderfoStatic', [authJwt.verifyToken], (req, res) => {
     FROM orde 
       LEFT JOIN orde_detail ON orde_detail.orde_id = orde.orde_id
     WHERE orde_detail.store_id = ${store_id} && orde.payment_status != '0' && orde.is_delivery != '0';`,
+    (err, data) => {
+      if (err) {
+        return res.status(401).send({
+          message: err.message
+        })
+      } else {
+        return res.status(200).json({
+          data: data,
+          total: data.length
+        })
+      }
+    }
+  )
+})
+
+router.get('/GetSumpricefoStatic', [authJwt.verifyToken], (req, res) => {
+  const store_id = req.user.store_id
+  db.query(
+    `SELECT orde.user_id, orde.payment_status, orde.is_delivery, orde_detail.orde_id, orde_detail.image, orde_detail.product_id, orde_detail.product_number, orde_detail.store_id , product.product_price
+    FROM orde 
+      LEFT JOIN orde_detail ON orde_detail.orde_id = orde.orde_id
+      LEFT JOIN product ON product.product_id = orde_detail.product_id
+    WHERE orde_detail.store_id = '${store_id}' && orde.payment_status != '0' && orde.is_delivery != '0';`,
     (err, data) => {
       if (err) {
         return res.status(401).send({
@@ -258,7 +326,7 @@ router.post('/create-Order-to-Order/:product_id,:product_number,:cart_shop_id,:s
                     })
                   } else {
                     db.query(
-                      `delete from cart_shop where cart_shop_id = ${cart_shop_id}`,
+                      `UPDATE product SET product_number = product_number - ${product_number} WHERE product.product_id = ${product_id};`,
                       (err) => {
                         if (err) {
                           return res.status(401).send({
@@ -266,116 +334,133 @@ router.post('/create-Order-to-Order/:product_id,:product_number,:cart_shop_id,:s
                             err
                           })
                         } else {
-                          return res.status(201).send({
-                            message: 'insert successfully',
-                          })
+                          db.query(
+                            `delete from cart_shop where cart_shop_id = ${cart_shop_id}`,
+                            (err) => {
+                              if (err) {
+                                return res.status(401).send({
+                                  message: err.message,
+                                  err
+                                })
+                              } else {
+                                return res.status(201).send({
+                                  message: 'insert successfully',
+                                })
+                              }
+
+                            }
+                          )
                         }
+
                       }
                     )
                   }
+
                 }
               )
             }
+
           }
         )
       }
+
     }
   )
 })
 
 
 
-  // delete Order
-  router.delete('/order/:orde_id', [authJwt.verifyToken], (req, res) => {
-    const orde_id = req.params.orde_id
-    db.query(
-      `select orde_id from orde where orde_id = ${orde_id};`,
-      (err, result) => {
-        if (err) {
-          return res.status(400).send({
-            code: err.code,
-            message: err.message
+// delete Order
+router.delete('/order/:orde_id', [authJwt.verifyToken], (req, res) => {
+  const orde_id = req.params.orde_id
+  db.query(
+    `select orde_id from orde where orde_id = ${orde_id};`,
+    (err, result) => {
+      if (err) {
+        return res.status(400).send({
+          code: err.code,
+          message: err.message
+        })
+      } else {
+        if (result.length === 0) {
+          return res.status(404).send({
+            message: 'orde_id not found'
           })
         } else {
-          if (result.length === 0) {
-            return res.status(404).send({
-              message: 'orde_id not found'
-            })
-          } else {
-            db.query(
-              `delete from orde where orde_id = ${orde_id}`,
-              (err, result) => {
-                if (err) {
-                  return res.status(400).send({
-                    code: err.code,
-                    message: err.message
-                  })
-                } else {
-                  return res.status(200).send({
-                    message: 'delete succeeded'
-                  })
-                }
+          db.query(
+            `delete from orde where orde_id = ${orde_id}`,
+            (err, result) => {
+              if (err) {
+                return res.status(400).send({
+                  code: err.code,
+                  message: err.message
+                })
+              } else {
+                return res.status(200).send({
+                  message: 'delete succeeded'
+                })
               }
-            )
-          }
+            }
+          )
         }
       }
-    )
-  })
+    }
+  )
+})
 
-  // delete OrderCart
-  router.delete('/cart/:cart_shop_id', [authJwt.verifyToken], (req, res) => {
-    const cart_shop_id = req.params.cart_shop_id
-    db.query(
-      `select cart_shop_id from cart_shop where cart_shop_id = ${cart_shop_id};`,
-      (err, result) => {
-        if (err) {
-          return res.status(400).send({
-            code: err.code,
-            message: err.message
+// delete OrderCart
+router.delete('/cart/:cart_shop_id', [authJwt.verifyToken], (req, res) => {
+  const cart_shop_id = req.params.cart_shop_id
+  db.query(
+    `select cart_shop_id from cart_shop where cart_shop_id = ${cart_shop_id};`,
+    (err, result) => {
+      if (err) {
+        return res.status(400).send({
+          code: err.code,
+          message: err.message
+        })
+      } else {
+        if (result.length === 0) {
+          return res.status(404).send({
+            message: 'cart_shop_id not found'
           })
         } else {
-          if (result.length === 0) {
-            return res.status(404).send({
-              message: 'cart_shop_id not found'
-            })
-          } else {
-            db.query(
-              `delete from cart_shop where cart_shop_id = ${cart_shop_id}`,
-              (err, result) => {
-                if (err) {
-                  return res.status(400).send({
-                    code: err.code,
-                    message: err.message
-                  })
-                } else {
-                  return res.status(200).send({
-                    message: 'delete succeeded'
-                  })
-                }
+          db.query(
+            `delete from cart_shop where cart_shop_id = ${cart_shop_id}`,
+            (err, result) => {
+              if (err) {
+                return res.status(400).send({
+                  code: err.code,
+                  message: err.message
+                })
+              } else {
+                return res.status(200).send({
+                  message: 'delete succeeded'
+                })
               }
-            )
-          }
+            }
+          )
         }
       }
-    )
-  })
+    }
+  )
+})
 
-  const imageUploadPath = "../src/assets";
-  var profile_path = "";
-  const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, imageUploadPath);
-    },
-    filename: function (req, file, cb) {
-      cb(null, `${file.originalname}`);
-      profile_path = `${file.originalname}`;
-    },
-  });
-  const imageUpload = multer({ storage: storage });
+const imageUploadPath = "../src/assets";
+var profile_path = "";
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, imageUploadPath);
+  },
+  filename: function (req, file, cb) {
+    cb(null, `${file.originalname}`);
+    profile_path = `${file.originalname}`;
+  },
+});
+const imageUpload = multer({ storage: storage });
 
 // patch payment
-router.patch('/payment/:orde_id', imageUpload.single("file"),[authJwt.verifyToken], (req, res) => {
+router.patch('/payment/:orde_id', imageUpload.single("file"), [authJwt.verifyToken], (req, res) => {
   const user_a_id = req.body.user_a_id
   const orde_id = req.params.orde_id
   db.query(
@@ -408,7 +493,7 @@ router.patch('/payment/:orde_id', imageUpload.single("file"),[authJwt.verifyToke
 })
 
 // patch deli
-router.patch('/delivery/:orde_id',[authJwt.verifyToken], (req, res) => {
+router.patch('/delivery/:orde_id', [authJwt.verifyToken], (req, res) => {
   const orde_id = req.params.orde_id
   const is_delivery = req.body.is_delivery
   db.query(
@@ -440,131 +525,131 @@ router.patch('/delivery/:orde_id',[authJwt.verifyToken], (req, res) => {
   )
 })
 
-  // create Product Detail
-  router.post(
-    '/product/detail/:product_id',
-    [authJwt.verifyToken, authJwt.isStore],
-    (req, res) => {
-      const product_id = req.params.product_id
-      const py_id = req.body.product_type_id
-      const pd_description = req.body.product_detail
-      db.query(
-        `select * from product where product_id = ${product_id}`,
-        (err, data) => {
-          if (err) {
-            return res.status(401).send({
-              message: err.message
+// create Product Detail
+router.post(
+  '/product/detail/:product_id',
+  [authJwt.verifyToken, authJwt.isStore],
+  (req, res) => {
+    const product_id = req.params.product_id
+    const py_id = req.body.product_type_id
+    const pd_description = req.body.product_detail
+    db.query(
+      `select * from product where product_id = ${product_id}`,
+      (err, data) => {
+        if (err) {
+          return res.status(401).send({
+            message: err.message
+          })
+        } else {
+          if (data.length === 0) {
+            return res.status(404).send({
+              message: 'Product ID not found'
             })
           } else {
-            if (data.length === 0) {
-              return res.status(404).send({
-                message: 'Product ID not found'
-              })
-            } else {
-              db.query(
-                `insert into product_detail (product_id, py_id, pd_description) values (${product_id}, ${py_id}, '${pd_description}');`,
-                (err, data) => {
-                  if (err) {
-                    return res.status(401).send({
-                      message: err.message
-                    })
-                  } else {
-                    return res.status(201).send({
-                      message: 'Create Product Detail successfully'
-                    })
-                  }
+            db.query(
+              `insert into product_detail (product_id, py_id, pd_description) values (${product_id}, ${py_id}, '${pd_description}');`,
+              (err, data) => {
+                if (err) {
+                  return res.status(401).send({
+                    message: err.message
+                  })
+                } else {
+                  return res.status(201).send({
+                    message: 'Create Product Detail successfully'
+                  })
                 }
-              )
-            }
+              }
+            )
           }
         }
-      )
-    }
-  )
+      }
+    )
+  }
+)
 
-  // Update Product
-  router.patch(
-    `/product/:product_id`,
-    [authJwt.verifyToken, authJwt.isStore],
-    (req, res) => {
-      const product_id = req.params.product_id
-      const product_name = req.body.product_name
-      const product_price = req.body.product_price
-      const product_number = req.body.product_number
-      db.query(
-        `select * from product where product_id = ${product_id};`,
-        (err, data) => {
-          if (err) {
-            return res.status(401).send({
-              message: err.message
+// Update Product
+router.patch(
+  `/product/:product_id`,
+  [authJwt.verifyToken, authJwt.isStore],
+  (req, res) => {
+    const product_id = req.params.product_id
+    const product_name = req.body.product_name
+    const product_price = req.body.product_price
+    const product_number = req.body.product_number
+    db.query(
+      `select * from product where product_id = ${product_id};`,
+      (err, data) => {
+        if (err) {
+          return res.status(401).send({
+            message: err.message
+          })
+        } else {
+          if (data.length === 0) {
+            return res.status(404).send({
+              message: 'Product ID not found'
             })
           } else {
-            if (data.length === 0) {
-              return res.status(404).send({
-                message: 'Product ID not found'
-              })
-            } else {
-              db.query(
-                `update product set product_name = '${product_name}', product_price = '${product_price}', product_number = ${product_number} where product_id = ${product_id}`,
-                (err, result) => {
-                  if (err) {
-                    return res.status(401).send({
-                      message: err.message
-                    })
-                  } else {
-                    return res.status(200).send({
-                      message: 'Updated successfully'
-                    })
-                  }
+            db.query(
+              `update product set product_name = '${product_name}', product_price = '${product_price}', product_number = ${product_number} where product_id = ${product_id}`,
+              (err, result) => {
+                if (err) {
+                  return res.status(401).send({
+                    message: err.message
+                  })
+                } else {
+                  return res.status(200).send({
+                    message: 'Updated successfully'
+                  })
                 }
-              )
-            }
+              }
+            )
           }
         }
-      )
-    }
-  )
+      }
+    )
+  }
+)
 
-  // Update Product Detail
-  router.patch(
-    '/product/detail/:product_id',
-    [authJwt.verifyToken, authJwt.isStore],
-    (req, res) => {
-      const product_id = req.params.product_id
-      const py_id = req.body.product_type_id
-      const pd_description = req.body.product_detail
-      db.query(
-        `select * from product where product_id = ${product_id};`,
-        (err, data) => {
-          if (err) {
-            return res.status(401).send({
-              message: err.message
+// Update Product Detail
+router.patch(
+  '/product/detail/:product_id',
+  [authJwt.verifyToken, authJwt.isStore],
+  (req, res) => {
+    const product_id = req.params.product_id
+    const py_id = req.body.product_type_id
+    const pd_description = req.body.product_detail
+    db.query(
+      `select * from product where product_id = ${product_id};`,
+      (err, data) => {
+        if (err) {
+          return res.status(401).send({
+            message: err.message
+          })
+        } else {
+          if (data.length === 0) {
+            return res.status(404).send({
+              message: 'Product ID not found'
             })
           } else {
-            if (data.length === 0) {
-              return res.status(404).send({
-                message: 'Product ID not found'
-              })
-            } else {
-              db.query(
-                `update product_detail set py_id = ${py_id}, pd_description = '${pd_description}' where product_id = ${product_id};`,
-                (err, result) => {
-                  if (err) {
-                    return res.status(401).send({
-                      message: err.message
-                    })
-                  } else {
-                    return res.status(200).send({
-                      message: 'Updated successfully'
-                    })
-                  }
+            db.query(
+              `update product_detail set py_id = ${py_id}, pd_description = '${pd_description}' where product_id = ${product_id};`,
+              (err, result) => {
+                if (err) {
+                  return res.status(401).send({
+                    message: err.message
+                  })
+                } else {
+                  return res.status(200).send({
+                    message: 'Updated successfully'
+                  })
                 }
-              )
-            }
+              }
+            )
           }
         }
-      )
-    }
-  )
+      }
+    )
+  }
+)
 
-  module.exports = router
+module.exports = router

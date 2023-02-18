@@ -3,7 +3,7 @@
     <v-img src="@/assets/9.png" class="responsive">
         <v-container fluid>
             <v-row class="mt-5 justify-center">
-                <v-col cols="12" class="mt-5">
+                <v-col cols="10" class="mt-5">
                     <h1 class="mb-5">จัดการสินค้า</h1>
                     <v-table>
                         <thead>
@@ -30,7 +30,7 @@
                                     สถานะการจำหน่าย
                                 </th>
                                 <th class="">
-                                    เครื่องมือ
+                                    การดำเนินการ
                                 </th>
                             </tr>
                         </thead>

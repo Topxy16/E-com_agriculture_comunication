@@ -4,7 +4,7 @@
       <v-card class="mt-5 align-self-center" color="#a8c8b1" height="">
                 <v-row class="justify-center">
                     <v-col cols="3" class="align-self-center mr-5">
-                        <div ><v-img src="../assets/logo3.png"></v-img> </div>
+                        <div><v-img src="../assets/logo3.png" max-height="360"></v-img></div>
                     </v-col>
                     <v-col cols="3" class="align-self-center">
                         <h2 class="mb-2">เข้าสู่ระบบ</h2>

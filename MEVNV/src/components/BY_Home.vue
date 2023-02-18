@@ -20,7 +20,7 @@
         <v-row class="">
             
             <v-col cols="2" v-for="product in product" :key="product.product_id" >
-                <v-card :loading="loading" class="mx-auto my-12" max-width="280" v-if="product.product_show === 1">
+                <v-card :loading="loading" class="mx-auto my-12" max-width="280" v-if="product.product_show === 1 && product.product_number != 0">
                     <template v-slot:loader="{ isActive }">
                         <v-progress-linear :active="isActive" color="deep-purple" height="4"
                             indeterminate></v-progress-linear>

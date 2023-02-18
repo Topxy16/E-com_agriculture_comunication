@@ -18,6 +18,79 @@ router.get('/product-type', (req, res) => {
   })
 })
 
+router.get('/product-type/veget', (req, res) => {
+  db.query(`SELECT product.*, product.py_id
+  FROM product
+  WHERE product.py_id = '16';`, (err, data) => {
+    if (err) {
+      return res.status(401).send({
+        message: err.message
+      })
+    } else {
+      return res.status(200).send({
+        data,
+        totle: data.length
+      }
+       
+        
+      )
+    }
+  })
+})
+router.get('/product-type/fruit', (req, res) => {
+  db.query(`SELECT product.*, product.py_id
+  FROM product
+  WHERE product.py_id = '15';`, (err, data) => {
+    if (err) {
+      return res.status(401).send({
+        message: err.message
+      })
+    } else {
+      return res.status(200).send({
+        data,
+        totle: data.length
+      }
+        
+      )
+    }
+  })
+})
+router.get('/product-type/flower', (req, res) => {
+  db.query(`SELECT product.*, product.py_id
+  FROM product
+  WHERE product.py_id = '13';`, (err, data) => {
+    if (err) {
+      return res.status(401).send({
+        message: err.message
+      })
+    } else {
+      return res.status(200).send({
+        data,
+        totle: data.length
+      }
+     
+      )
+    }
+  })
+})
+router.get('/product-type/tree', (req, res) => {
+  db.query(`SELECT product.*, product.py_id
+  FROM product
+  WHERE product.py_id = '14';`, (err, data) => {
+    if (err) {
+      return res.status(401).send({
+        message: err.message
+      })
+    } else {
+      return res.status(200).send({
+        data,
+        totle: data.length
+      }
+      )
+    }
+  })
+})
+
 // search Product Type
 router.get('/product-type/search', (req, res) => {
   const name = req.query.name

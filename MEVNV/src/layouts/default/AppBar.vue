@@ -41,12 +41,34 @@
       <v-list-item prepend-icon="mdi-store-edit" title="สร้างร้านค้า" :to="item.link6"></v-list-item>
     </v-list> -->
     <v-list v-model:opened="open">
-      <v-list-item prepend-icon="mdi-account" title="ผู้ใช้งาน" :to="Link.DashboardAdmin" v-if="role.role_id === 3"></v-list-item>
-      <v-list-item prepend-icon="mdi-account" title="ประเภทสินค้า" :to="Link.AddProductType" v-if="role.role_id === 3"></v-list-item>
+      <v-list-group value="Admin">
+        <template v-slot:activator="{ props }">
+          <v-list-item
+            v-bind="props"
+            prepend-icon="mdi-account"
+            title="แอดมิน"
+            v-if="role.role_id === 3"
+          ></v-list-item>
+        </template>
+
+        <v-list-item
+            title="แดชบอร์ด"
+            :to="Link.DashboardAdmin"
+          ></v-list-item>
+        <v-list-item
+            title="ผู้ใช้งาน"
+            :to="Link.UserAdmin"
+          ></v-list-item>
+          <v-list-item
+            title="ประเภทสินค้า"
+            :to="Link.AddProductType"           
+          ></v-list-item>
+        </v-list-group>
       <v-list-item prepend-icon="mdi-home" title="หน้าแรก" :to="Link.Home"></v-list-item>
       <v-list-item prepend-icon="mdi-cart" title="รถเข็น" :to="Link.Cart"></v-list-item>
       <v-list-item prepend-icon="mdi-clipboard" title="คำสั่งซื้อ" :to="Link.OrderBuyer"></v-list-item>
 
+      
       <v-list-group value="Profile">
         <template v-slot:activator="{ props }">
           <v-list-item
@@ -138,6 +160,7 @@ export default {
         ViewProduct: '/SL_viewproduct',
         Store: '/sl_store',
         Static: '/SL_static',
+        UserAdmin: '/Admin_user',
       },
       open: ['Product'],
     }

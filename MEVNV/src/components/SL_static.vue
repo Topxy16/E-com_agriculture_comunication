@@ -2,10 +2,17 @@
     <v-img src="@/assets/9.png" class="responsive">
         <v-container>
             <v-row class="mb-3 mt-5">
-                <v-col cols="12">
+                <v-col cols="6">
                     <v-card>
                         <v-card-item>
                             <h3>จำนวนออร์เดอร์ที่ซื้อขายสำเร็จ : {{ recordsCount }}</h3>
+                        </v-card-item>
+                    </v-card>
+                </v-col>
+                <v-col cols="6">
+                    <v-card>
+                        <v-card-item>
+                            <h3>ยอดขายทั้งหมด : {{ productsumprice }}</h3>
                         </v-card-item>
                     </v-card>
                 </v-col>
@@ -43,6 +50,9 @@
                                             <th class="text-left">
                                                 สถานะการการจัดส่ง
                                             </th>
+                                            <th class="text-left">
+                                                ยอดขายทั้งหมด
+                                            </th>
                                      
                                         </tr>
                                     </thead>
@@ -73,18 +83,8 @@
                                             </td>
                                             <td><v-img :src="(`/src/assets/${order.payment_status}`)" max-height="150" max-width=""></v-img></td>
                                             <td>{{ order.is_delivery === '0' ? 'ยังไม่ทำการจัดส่ง' : order.is_delivery}}</td>
-                                            <td v-if="order.is_delivery === '0'">
-                                                <router-link :to="`/SL_isdelivery/${order.orde_id}`"
-                                                    class="text-decoration-none text-black mr-2">
-                                                    <v-btn color="success">
-                                                        จัดส่งสินค้า
-                                                    </v-btn>
-                                                </router-link>
-
-                                                <v-btn @click="deleteOrderInOrder(order.orde_id)" color="red">
-                                                    ยกเลิกคำสั่งซื้อ
-                                                </v-btn>
-                                            </td>
+                                            <td>{{ order.product_number}}</td>
+                                            
                                         </tr>
                                     </tbody>
                                 </v-table>
@@ -107,6 +107,9 @@ export default {
         return {
             order: [],
             product: [],
+            ordersum: [],
+            sumprice: [],
+            productsumprice: 0,
         }
 
     },
@@ -114,12 +117,19 @@ export default {
         recordsCount() {
             return this.order.length;
         },
+        sumprice() {
+            return this.ordersum.product_price*this.product_number;
+        },
     },
     async created() {
         setAuthheader(localStorage.getItem("token"))
         await this.GetOrderDetail()
         await this.GetProductDetail()
+        await this.GetSumprice()
+        await this.ViewSumprice()
         document.title = 'Static'
+        console.log(this.ordersum.product_price)
+
     },
     methods: {
         async deleteOrderInOrder(orde_id) {
@@ -192,7 +202,40 @@ export default {
                 // }
                 console.log(e)
             }
-        }
+        },
+        async GetSumprice() {
+            try {
+                const resp = await axios.get('http://localhost:3001/api/GetSumpricefoStatic')
+                this.ordersum = resp.data.data
+            } catch (e) {
+                // if (e.response.status === 403) {
+                //     alert("Token Exception")
+                //     this.$router.push('/login');
+                // } else if (e.response.status === 401) {
+                //     alert("Go to Login")
+                //     this.$router.push('/login');
+                // }
+                console.log(e)
+            }
+        },
+        async ViewSumprice() {
+            try {
+                const resp = await axios.get(`http://localhost:3001/api/OrderStoreID/sumprice`)      
+                this.sumprice = resp.data.data      
+                resp.data.data.forEach(element => {
+                    this.productsumprice = (element.product_price*element.product_number) + this.productsumprice
+                });
+            } catch (e) {
+                if (e.response.status === 403) {
+                    alert("Token Exception")
+                    this.$router.push('/login');
+                } else if (e.response.status === 401) {
+                    alert("Go to Login")
+                    this.$router.push('/login');
+                }
+                console.log(e)
+            }
+        },
     }
 }
 </script>
